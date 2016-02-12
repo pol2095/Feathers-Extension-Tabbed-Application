@@ -8,7 +8,7 @@ This project adds two components (ViewNavigatorApplication and TabbedViewNavigat
 * [Website](http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/)
 * [API Reference](http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/docs/index.html?components/package-detail.html&components/class-list.html)
 * [Discussion Forum](http://forum.starling-framework.org/forum/feathers)
-* [Github Project](https://github.com/BowlerHatLLC/feathers)
+* [Github Project](https://github.com/pol2095/Feathers-Extension-Tabbed-Application)
 
 ## Minimum Requirements
 
