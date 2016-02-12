@@ -44,9 +44,13 @@ package components
 		 */
 		public var vnID:String;
 		/**
-		 * Keyboard key code to pop view.
+		 * Keyboard key code to pop view
 		 *
-		 * <p>"back", "left" or key code(uint).</p>
+		 * [ViewNavigatorApplication-only]
+		 *
+		 * <p>Possible values are "back", "left" or key code (uint).</p>
+		 *
+		 * @default null
 		 */
 		public var keyCode:String;
 		
@@ -77,6 +81,8 @@ package components
 		 * In-memory persistence saves views and data as the user navigates the application
 		 *
 		 * [ViewNavigatorApplication-only]
+		 *
+		 * @default false
 		 */
 		private var _persistNavigatorState:Boolean;
 		public function get persistNavigatorState():Boolean

@@ -19,16 +19,14 @@ package components
 	public class TabbedViewNavigator extends LayoutGroup
 	{
 		/**
-		 * The tab bar
+		 * The tab bar.
 		 */
 		public var tabBar:TabBar;
 		private var layoutDataTB:AnchorLayoutData;
 		/**
 		 * The navigators that showing the views
-		 * 
-		 * @private
 		 */
-		public var screenNavigator:ScreenNavigator;
+		private var screenNavigator:ScreenNavigator;
 		private var layoutDataVN:AnchorLayoutData;
 		
 		/**
@@ -69,20 +67,35 @@ package components
 		 */
 		public var my_so:SharedObject = SharedObject.getLocal("feathersPersistenceManager");
 		private var init:Boolean;
+		
+		private var _tabBarAutoHide:Boolean = true;
 		/**
 		 * Auto-hide the tab bar
+		 *
+		 * @default true
 		 */
-		public var tabBarAutoHide:Boolean = true;
+		public function get tabBarAutoHide():Boolean
+		{
+			return _tabBarAutoHide;
+		}
+		public function set tabBarAutoHide(value:Boolean):void
+		{
+			_tabBarAutoHide = value;
+		}
 		/**
 		 * Keyboard key code to pop view.
 		 *
-		 * <p>"back", "left" or key code(uint).</p>
+		 * <p>Possible values are "back", "left" or key code (uint).</p>
+		 *
+		 * @default null
 		 */
 		public var keyCode:String;
 		
 		private var _persistNavigatorState:Boolean;
 		/**
-		 * In-memory persistence saves navigators, views and data as the user navigates the application
+		 * In-memory persistence saves navigators, views and data as the user navigates the application.
+		 *
+		 * @default false
 		 */
 		public function get persistNavigatorState():Boolean
 		{
@@ -98,7 +111,7 @@ package components
 		/**
 		 * Distance from the bottom of the application.
 		 *
-		 * <p>The default value is NaN.</p>
+		 * @default NaN.
 		 *
 		 * <p><b>Note:</b> If you use "bottom" property, don't use "top" property in the same time.</p>
 		 */
@@ -131,9 +144,9 @@ package components
 		/**
 		 * Distance from the top of the application.
 		 *
-		 * <p>The default value is 0.</p>
+		 * @default 0.
 		 *
-		 * <p><b>Note:</b> If you use "bottom" property, don't use "top" property in the same time.</p>
+		 * <p><b>Note:</b> If you use "top" property, don't use "bottom" property in the same time.</p>
 		 */
 		public function get top():Number
 		{
@@ -415,7 +428,7 @@ package components
 		}
 		
 		/**
-		 * tabBar height
+		 * The tab bar height.
 		 */
 		public function get tabBarHeight():Number
 		{
