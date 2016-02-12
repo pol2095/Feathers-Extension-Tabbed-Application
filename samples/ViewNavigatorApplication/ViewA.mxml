@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:f="library://ns.feathersui.com/mxml"
+	creationComplete="creationCompleteHandler()"
+	xmlns:components="components.*">
+ 
+	<fx:Script>
+		<![CDATA[
+			private function creationCompleteHandler():void
+			{
+				if(this.data) trace("difficulty : "+this.data.difficulty);
+				trace(owner.activeScreenID);
+				if(this.data) trace("test : "+this.data.test);
+			}
+			private function button_triggeredHandler( event:Event ):void
+			{
+				owner.pushView( ViewB );
+			}
+			private function button2_triggeredHandler( event:Event ):void
+			{
+				owner.popView();
+			}
+			private function button3_triggeredHandler( event:Event ):void
+			{
+				if(!this.data) this.data = {};
+				this.data.test = "test";
+				trace("add test : "+this.data.test);
+			}
+		]]>
+	</fx:Script>
+	
+	<f:LayoutGroup>
+		<f:layout>
+			<f:HorizontalLayout gap="10"/>
+		</f:layout>
+		
+		<f:Button label="Go to View B" triggered="button_triggeredHandler(event)"/>
+		<f:Button label="Pop view" triggered="button2_triggeredHandler(event)"/>
+		<f:Button label="Add &quot;test&quot; data" triggered="button3_triggeredHandler(event)"/>
+	</f:LayoutGroup>
+ 
+</components:View>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:PanelView xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:f="library://ns.feathersui.com/mxml"
+	creationComplete="creationCompleteHandler()"
+	xmlns:components="components.*">
+	<components:headerProperties>
+		<fx:Object title="Feathers in MXML">
+			<fx:rightItems>
+				<fx:Vector type="starling.display.DisplayObject">
+					<f:Button label="Exit" triggered="button3_triggeredHandler(event)"/>
+				</fx:Vector>
+			</fx:rightItems>
+		</fx:Object>
+	</components:headerProperties>
+ 
+	<fx:Script>
+		<![CDATA[
+			private function creationCompleteHandler():void
+			{
+				//
+			}
+			private function button_triggeredHandler( event:Event ):void
+			{
+				owner.pushView( ViewA );
+			}
+			private function button2_triggeredHandler( event:Event ):void
+			{
+				owner.popView();
+			}
+			private function button3_triggeredHandler( event:Event ):void
+			{
+				owner.exit();
+			}
+		]]>
+	</fx:Script>
+	
+	<f:LayoutGroup>
+		<f:layout>
+			<f:HorizontalLayout gap="10"/>
+		</f:layout>
+		
+		<f:Button label="Go to View A" triggered="button_triggeredHandler(event)"/>
+		<f:Button label="Pop view" triggered="button2_triggeredHandler(event)"/>
+	</f:LayoutGroup>
+ 
+</components:PanelView>

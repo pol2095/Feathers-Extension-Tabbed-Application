@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:View xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:f="library://ns.feathersui.com/mxml"
+	creationComplete="creationCompleteHandler()"
+	xmlns:components="components.*">
+	
+	<fx:Script>
+		<![CDATA[
+			private function creationCompleteHandler():void
+			{
+				//
+			}
+			private function button_triggeredHandler( event:Event ):void
+			{
+				owner.pushView( ViewC );
+			}
+			private function button2_triggeredHandler( event:Event ):void
+			{
+				owner.popView();
+			}
+		]]>
+	</fx:Script>
+	
+	<f:LayoutGroup>
+		<f:layout>
+			<f:HorizontalLayout gap="10"/>
+		</f:layout>
+		
+		<f:Button label="Go to View C" triggered="button_triggeredHandler(event)"/>
+		<f:Button label="Pop view" triggered="button2_triggeredHandler(event)"/>
+	</f:LayoutGroup>
+ 
+</components:View>

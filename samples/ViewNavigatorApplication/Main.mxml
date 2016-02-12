@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:ViewNavigatorApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:f="library://ns.feathersui.com/mxml"
+	creationComplete="creationCompleteHandler()"
+	theme="feathers.themes.MetalWorksDesktopTheme"
+	xmlns:components="components.*"
+	persistNavigatorState="true"><!-- keyCode="left" -->
+ 
+	<fx:Script>
+		<![CDATA[
+			import feathers.motion.Slide;
+			import starling.animation.Transitions;
+ 
+			private function creationCompleteHandler():void
+			{
+				var data:Object = { volume: 0.8, difficulty: "hard" };
+				pushView(ViewA, data);
+				
+				this.pushTransition = Slide.createSlideLeftTransition();
+				this.popTransition = Slide.createSlideRightTransition();
+				this.pushTransition = Slide.createSlideLeftTransition( 0.75, Transitions.EASE_IN_OUT );
+			}
+		]]>
+	</fx:Script>
+ 
+</components:ViewNavigatorApplication>
