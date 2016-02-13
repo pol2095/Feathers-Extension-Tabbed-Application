@@ -30,7 +30,12 @@ package components
 
 	/**
 	 * Base class for a Feathers application with a
-	 * <code>StackScreenNavigator</code> as the root display object.
+	 * <code>TabbedViewNavigator</code> as the root display object.
+	 *
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
+	 * @see components.TabbedViewNavigator
+	 * @see components.View
+	 * @see components.PanelView
 	 */
 	public class TabbedViewNavigatorApplication extends TabbedViewNavigator
 	{

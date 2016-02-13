@@ -1,3 +1,10 @@
+/*
+Feathers
+Copyright 2012-2015 Bowler Hat LLC. All Rights Reserved.
+
+This program is free software. You can redistribute and/or modify it in
+accordance with the terms of the accompanying license agreement.
+*/
 package components
 {
 	import starling.display.DisplayObject;
@@ -15,6 +22,16 @@ package components
 	import flash.ui.Keyboard;
 	import feathers.events.FeathersEventType;
 	
+	/**
+	 * A "view stack"-like container that supports navigation between views
+	 * (any display object) through events, based on <code>StackScreenNavigator</code>.
+	 *
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.html How to use ViewNavigatorApplication with mxml
+	 * @see components.View
+	 * @see components.PanelView
+	 * @see feathers.controls.StackScreenNavigator
+	 */
 	public class ViewNavigator extends StackScreenNavigator
 	{
 		/**
