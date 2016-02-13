@@ -1,7 +1,7 @@
 Simplified BSD License
 ======================
 
-Copyright 62015 pol2095. All rights reserved.
+Copyright 2016 pol2095. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:

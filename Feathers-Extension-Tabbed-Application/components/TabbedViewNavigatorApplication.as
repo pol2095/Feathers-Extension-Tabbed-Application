@@ -1,5 +1,5 @@
 /*
-Copyright 2015 pol2095
+Copyright 2016 pol2095
 
 See the NOTICE file distributed with this work for additional information
 regarding copyright ownership. The author licenses this file to You under the
