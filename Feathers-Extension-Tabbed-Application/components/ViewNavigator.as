@@ -43,6 +43,9 @@ package components
 		 * [TabbedViewNavigatorApplication-only]
 		 */
 		public var vnID:String;
+		
+		private var hasEventListener_keyCode:Boolean;
+		private var _keyCode:String;
 		/**
 		 * Keyboard key code to pop view
 		 *
@@ -52,7 +55,25 @@ package components
 		 *
 		 * @default null
 		 */
-		public var keyCode:String;
+		public function get keyCode():String
+		{
+			return _keyCode;
+		}
+		public function set keyCode(value:String):void
+		{
+			_keyCode = value;
+			if(owner || !stage) return;
+			if(value && !hasEventListener_keyCode)
+			{
+				hasEventListener_keyCode = true;
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+			}
+			else if(!value && hasEventListener_keyCode)
+			{
+				hasEventListener_keyCode = false;
+				stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+			}
+		}
 		
 		/**
 		 * Constructor. 
@@ -77,14 +98,13 @@ package components
 			}
 		}
 		
+		private var hasEventListener_persistNavigatorState:Boolean;
+		private var _persistNavigatorState:Boolean;
 		/**
-		 * In-memory persistence saves views and data as the user navigates the application
-		 *
-		 * [ViewNavigatorApplication-only]
+		 * In-memory persistence saves navigators, views and data as the user navigates the application.
 		 *
 		 * @default false
 		 */
-		private var _persistNavigatorState:Boolean;
 		public function get persistNavigatorState():Boolean
 		{
 			return _persistNavigatorState;
@@ -92,7 +112,17 @@ package components
 		public function set persistNavigatorState(value:Boolean):void
 		{
 			_persistNavigatorState = value;
-			if(value) NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
+			if(value && !hasEventListener_persistNavigatorState)
+			{
+				hasEventListener_persistNavigatorState = true;
+				NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
+			}
+			else if(!value && hasEventListener_persistNavigatorState)
+			{
+				hasEventListener_persistNavigatorState = false;
+				NativeApplication.nativeApplication.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
+				clear();
+			}
 		}
 		
 		private function pushFirstView(screen:Object, data:Object = null, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
@@ -299,7 +329,11 @@ package components
 		private function creationCompleteHandler(event:starling.events.Event):void
 		{
 			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
-			if(keyCode) stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+			if(keyCode && !hasEventListener_keyCode)
+			{
+				hasEventListener_keyCode = true;
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+			}
 		}
 	}
 }
