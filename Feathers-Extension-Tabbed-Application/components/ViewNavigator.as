@@ -78,12 +78,11 @@ package components
 		/**
 		 * Constructor. 
 		 */
-		public function ViewNavigator(screen:Object = null, data:Object = null, persistNavigatorState:Boolean = true, transition:Function = null, owner:Object = null, vnID:String = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null)
+		public function ViewNavigator(screen:Object = null, data:Object = null, transition:Function = null, owner:Object = null, vnID:String = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null)
 		{
 			super();
 			this.owner = owner;
 			this.vnID = vnID;
-			this._persistNavigatorState = persistNavigatorState;
 			if(screen) {
 				pushView(screen, data, null, transition, _history, _historyData);
 				
@@ -103,15 +102,18 @@ package components
 		/**
 		 * In-memory persistence saves navigators, views and data as the user navigates the application.
 		 *
+		 * [ViewNavigatorApplication-only]
+		 *
 		 * @default false
 		 */
 		public function get persistNavigatorState():Boolean
 		{
-			return _persistNavigatorState;
+			return owner ? owner.persistNavigatorState : _persistNavigatorState;
 		}
 		public function set persistNavigatorState(value:Boolean):void
 		{
 			_persistNavigatorState = value;
+			if(owner) return;
 			if(value && !hasEventListener_persistNavigatorState)
 			{
 				hasEventListener_persistNavigatorState = true;
@@ -329,7 +331,7 @@ package components
 		private function creationCompleteHandler(event:starling.events.Event):void
 		{
 			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
-			if(keyCode && !hasEventListener_keyCode)
+			if(keyCode && !hasEventListener_keyCode && !owner)
 			{
 				hasEventListener_keyCode = true;
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);

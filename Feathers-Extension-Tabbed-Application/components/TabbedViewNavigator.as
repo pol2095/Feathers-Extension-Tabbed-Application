@@ -237,7 +237,7 @@ package components
 		private function createElement(label:String, vnID:String, screen:Object, data:Object, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
 		{
 			tabBar.dataProvider.addItem( { label: label, vnID: vnID } );
-			var navigator:ViewNavigator = new ViewNavigator(screen, data, persistNavigatorState, transition, this, vnID, _history, _historyData);
+			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, vnID, _history, _historyData);
 			screenNavigator.addScreen(vnID, new ScreenNavigatorItem(navigator));
 			(tabBar.dataProvider.length == 1) ? hideTabBar() : showTabBar();
 			tabBar.validate();
