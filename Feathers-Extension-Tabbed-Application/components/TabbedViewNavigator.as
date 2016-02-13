@@ -70,7 +70,7 @@ package components
 		
 		private var _tabBarAutoHide:Boolean = true;
 		/**
-		 * Auto-hide the tab bar
+		 * Auto-hide the tab bar.
 		 *
 		 * @default true
 		 */
@@ -264,7 +264,7 @@ package components
 		}
 		
 		/**
-		 * Save the navigators, views and data
+		 * Save the navigators, views and data.
 		 */
 		public function save():void
 		{
@@ -289,7 +289,7 @@ package components
 		}
 		
 		/**
-		 * Clear the persistence navigators, views and data
+		 * Clear the persistence navigators, views and data.
 		 */
 		public function clear():void
 		{
@@ -302,7 +302,7 @@ package components
 		}
 		
 		/**
-		 * Exit to the application and clear the persistence navigators, views and data
+		 * Exit to the application and clear the persistence navigators, views and data.
 		 */
 		public function exit(errorCode:int = 0):void
 		{
@@ -318,7 +318,7 @@ package components
 		}
 		
 		/**
-		 * Hide the tab bar
+		 * Hide the tab bar.
 		 */
 		public function hideTabBar():void
 		{			
@@ -328,7 +328,7 @@ package components
 		}
 		
 		/**
-		 * Show the tab bar
+		 * Show the tab bar.
 		 */
 		public function showTabBar():void
 		{			
@@ -373,7 +373,7 @@ package components
 		}
 		
 		/**
-		 * Rename a tab at the specified index
+		 * Rename a tab at the specified index.
 		 *
 		 * @param index new tab name.
 		 *
@@ -446,7 +446,7 @@ package components
 		}
 		
 		/**
-		 * Number of tabs 
+		 * Number of tabs.
 		 */
 		public function get length():uint
 		{

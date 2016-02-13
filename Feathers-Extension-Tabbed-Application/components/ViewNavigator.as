@@ -34,13 +34,13 @@ package components
 		/**
 		 * The tabbed navigators that is currently displaying this navigator
 		 *
-		 * [TabbedViewNavigatorApplication-only]
+		 * [TabbedViewNavigatorApplication-only].
 		 */
 		public var owner:Object;
 		/**
 		 * The navigator id that is currently displaying by the tabbed navigators
 		 *
-		 * [TabbedViewNavigatorApplication-only]
+		 * [TabbedViewNavigatorApplication-only].
 		 */
 		public var vnID:String;
 		
@@ -49,7 +49,7 @@ package components
 		/**
 		 * Keyboard key code to pop view
 		 *
-		 * [ViewNavigatorApplication-only]
+		 * [ViewNavigatorApplication-only].
 		 *
 		 * <p>Possible values are "back", "left" or key code (uint).</p>
 		 *
@@ -100,9 +100,9 @@ package components
 		private var hasEventListener_persistNavigatorState:Boolean;
 		private var _persistNavigatorState:Boolean;
 		/**
-		 * In-memory persistence saves navigators, views and data as the user navigates the application.
+		 * In-memory persistence saves navigators, views and data as the user navigates the application
 		 *
-		 * [ViewNavigatorApplication-only]
+		 * [ViewNavigatorApplication-only].
 		 *
 		 * @default false
 		 */
@@ -199,7 +199,7 @@ package components
 		}
 		
 		/**
-		 * Number of views in the navigation stack 
+		 * Number of views in the navigation stack.
 		 */
 		public function get length():uint
 		{
@@ -207,7 +207,7 @@ package components
 		}
 		
 		/**
-		 * Position in the navigation stack
+		 * Position in the navigation stack.
 		 */
 		public function get position():uint
 		{
@@ -247,7 +247,7 @@ package components
 		/**
 		 * Save views and data
 		 *
-		 * [ViewNavigatorApplication-only]
+		 * [ViewNavigatorApplication-only].
 		 */
 		public function save():void
 		{
@@ -265,7 +265,7 @@ package components
 		/**
 		 * Clear the persistence views and data
 		 *
-		 * [ViewNavigatorApplication-only]
+		 * [ViewNavigatorApplication-only].
 		 */
 		public function clear():void
 		{
@@ -280,7 +280,7 @@ package components
 		/**
 		 * Exit to the application and clear the persistence navigators, views and data
 		 *
-		 * [ViewNavigatorApplication-only]
+		 * [ViewNavigatorApplication-only].
 		 */
 		public function exit(errorCode:int = 0):void
 		{
@@ -296,7 +296,7 @@ package components
 		}
 		
 		/**
-		 * Update data in a view
+		 * Update data in a view.
 		 */
 		public function historyDataUpdate():void
 		{
