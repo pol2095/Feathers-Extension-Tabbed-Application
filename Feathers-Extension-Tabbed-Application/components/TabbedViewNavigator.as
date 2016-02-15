@@ -172,7 +172,7 @@ package components
 		/**
 		 * Distance from the bottom of the application.
 		 *
-		 * @default NaN.
+		 * @default NaN
 		 */
 		public function get bottom():Number
 		{
@@ -192,7 +192,7 @@ package components
 		/**
 		 * Distance from the top of the application.
 		 *
-		 * @default 0.
+		 * @default 0
 		 */
 		public function get top():Number
 		{
@@ -219,7 +219,7 @@ package components
 		 *
 		 * <p>Possible values are "top" or "bottom".</p>
 		 *
-		 * @default "top".
+		 * @default "top"
 		 */
 		public function get tabBarAlign():String
 		{
@@ -234,7 +234,7 @@ package components
 		/**
 		 * Distance from the left of the application.
 		 *
-		 * @default 0.
+		 * @default 0
 		 */
 		public function get left():Number
 		{
@@ -252,7 +252,7 @@ package components
 		/**
 		 * Distance from the right of the application.
 		 *
-		 * @default 0.
+		 * @default 0
 		 */
 		public function get right():Number
 		{
