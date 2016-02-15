@@ -21,6 +21,8 @@ package components
 	import starling.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	import feathers.events.FeathersEventType;
+	import feathers.controls.ScrollContainer;
+	import feathers.controls.ToggleButton;
 	
 	/**
 	 * A container takes a <code>tab Bar</code> and <code>ViewNavigator</code>s , based on <code>LayoutGroup</code>.
@@ -38,12 +40,21 @@ package components
 		 * The tab bar.
 		 */
 		public var tabBar:TabBar;
+		/**
+		 * The tab bar scroller.
+		 * 
+		 * @private 
+		 */
+		public var scroller:ScrollContainer;
 		private var layoutDataTB:AnchorLayoutData;
 		/**
 		 * The navigators that showing the views
 		 */
 		private var screenNavigator:ScreenNavigator;
 		private var layoutDataVN:AnchorLayoutData;
+		private var isScrollToIndex:Boolean = true;
+		private var _tabBarHeight:Number = 0;
+		private var scrollerHeight:Number = 0;
 		
 		/**
 		 * Constructor. 
@@ -55,18 +66,20 @@ package components
 			var container:LayoutGroup = new LayoutGroup();
 			container.layout = new AnchorLayout();
 			
-			tabBar = new TabBar();
+			scroller = new ScrollContainer();
 			layoutDataTB = new AnchorLayoutData();
 			layoutDataTB.right = layoutDataTB.top = layoutDataTB.left = 0;
-			tabBar.layoutData = layoutDataTB;
-			container.addChild( tabBar );
+			scroller.layoutData = layoutDataTB;
+			tabBar = new TabBar();
+			scroller.addChild( tabBar );
+			container.addChild( scroller );
 			
 			screenNavigator = new ScreenNavigator();
 			layoutDataVN = new AnchorLayoutData();
 			screenNavigator.layoutData = layoutDataVN;
-			container.addChild( screenNavigator );
 			layoutDataVN.bottom = layoutDataVN.right = layoutDataVN.top = layoutDataVN.left = 0;
-			layoutDataVN.topAnchorDisplayObject = this.tabBar;
+			layoutDataVN.topAnchorDisplayObject = this.scroller;
+			container.addChild( screenNavigator );
 			
 			this.addChild( container );
 			
@@ -155,13 +168,11 @@ package components
 			}
 		}
 		
-		private var _bottom:Number;
+		private var _bottom:Number = NaN;
 		/**
 		 * Distance from the bottom of the application.
 		 *
 		 * @default NaN.
-		 *
-		 * <p><b>Note:</b> If you use "bottom" property, don't use "top" property in the same time.</p>
 		 */
 		public function get bottom():Number
 		{
@@ -170,31 +181,18 @@ package components
 		public function set bottom(value:Number):void
 		{
 			_bottom = value;
-			if(!isNaN(value))
+			if(!isCreated) return;
+			if(tabBarAlign != "top")
 			{
-				layoutDataTB.top = NaN;
-				layoutDataTB.bottom = value;
-				layoutDataVN.bottom = NaN;
-				layoutDataVN.topAnchorDisplayObject = null;
-				layoutDataVN.bottomAnchorDisplayObject = this.tabBar;
-			}
-			else 
-			{
-				layoutDataTB.top = 0;
-				layoutDataTB.bottom = NaN;
-				layoutDataVN.bottom = 0;
-				layoutDataVN.topAnchorDisplayObject = this.tabBar;
-				layoutDataVN.bottomAnchorDisplayObject = null;
+				layoutDataTB.bottom = bottom + top;
 			}
 		}
 		
-		private var _top:Number;
+		private var _top:Number = 0;
 		/**
 		 * Distance from the top of the application.
 		 *
 		 * @default 0.
-		 *
-		 * <p><b>Note:</b> If you use "top" property, don't use "bottom" property in the same time.</p>
 		 */
 		public function get top():Number
 		{
@@ -203,7 +201,59 @@ package components
 		public function set top(value:Number):void
 		{
 			_top = value;
-			if(!isNaN(value)) layoutDataTB.top = top;
+			if(!isCreated) return;
+			if(tabBarAlign == "top")
+			{
+				layoutDataTB.top = top;
+			}
+			else
+			{
+				layoutDataTB.bottom = bottom + top;
+				layoutDataVN.top = top;
+			}
+		}
+		
+		/**
+		 * The vertical alignment of the tabBar.
+		 *
+		 * <p>Possible values are "top" or "bottom".</p>
+		 *
+		 * @default "top".
+		 */
+		public var tabBarAlign:String = "top";
+		
+		private var _left:Number = 0;
+		/**
+		 * Distance from the left of the application.
+		 *
+		 * @default 0.
+		 */
+		public function get left():Number
+		{
+			return _left;
+		}
+		public function set left(value:Number):void
+		{
+			_left = value;
+			layoutDataTB.left = value;
+			layoutDataVN.left = value;
+			if(isCreated) resizeHandler();
+		}
+		
+		private var _right:Number = 0;
+		/**
+		 * Distance from the right of the application.
+		 *
+		 * @default 0.
+		 */
+		public function get right():Number
+		{
+			return _right;
+		}
+		public function set right(value:Number):void
+		{
+			_right = value;
+			if(isCreated) resizeHandler(); 
 		}
 		
 		/**
@@ -229,8 +279,7 @@ package components
 					init = false;
 					var vnID:String = newID();
 					createElement(label, vnID, screen, data, transition);
-					tabBar.selectedIndex = 0;
-					screenNavigator.showScreen(vnID);
+					this.selectedIndex = 0;
 				}
 				else
 				{
@@ -240,8 +289,7 @@ package components
 					{
 						createElement(tabBarHistory[i].label, tabBarHistory[i].vnID, screen, data, transition, Vector.<String>(navigatorsHistory[i]._history), Vector.<Object>(navigatorsHistory[i]._historyData));
 					}
-					tabBar.selectedIndex = my_so.data.tabBarSelected;
-					screenNavigator.showScreen(tabBar.selectedItem.vnID);
+					this.selectedIndex = my_so.data.tabBarSelected;
 				}
 			}
 			else if(!init)
@@ -250,13 +298,13 @@ package components
 			}
 		}
 		
-		private function createElement(label:String, vnID:String, screen:Object, data:Object, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
+		private function createElement(label:String, vnID:String, screen:Object, data:Object, transition:Function, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
 		{
 			tabBar.dataProvider.addItem( { label: label, vnID: vnID } );
 			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, vnID, _history, _historyData);
 			screenNavigator.addScreen(vnID, new ScreenNavigatorItem(navigator));
+			_validate();
 			(tabBar.dataProvider.length == 1) ? hideTabBar() : showTabBar();
-			tabBar.validate();
 		}
 		
 		private function newID():String
@@ -271,6 +319,7 @@ package components
 		
 		private function tabBar_changeHandler( event:starling.events.Event ):void
 		{
+			//if(this.selectedIndex < 0) return;
 			if(screenNavigator.activeScreenID != tabBar.selectedItem.vnID) screenNavigator.showScreen(tabBar.selectedItem.vnID);
 		}
 		
@@ -297,7 +346,7 @@ package components
 					navigator.historyDataUpdate();
 					navigatorsHistory.push( { _history: navigator._history, _historyData: navigator._historyData } );
 				}
-				my_so.data.tabBarSelected = tabBar.selectedIndex;
+				my_so.data.tabBarSelected = this.selectedIndex;
 				my_so.data.tabBarHistory = tabBarHistory;
 				my_so.data.viewsHistory = navigatorsHistory;
 				my_so.flush();
@@ -338,9 +387,9 @@ package components
 		 */
 		public function hideTabBar():void
 		{			
-			if(!tabBar.visible || !tabBarAutoHide) return;
-			tabBar.visible = false;
-			!bottom ? layoutDataVN.topAnchorDisplayObject = null : layoutDataVN.bottomAnchorDisplayObject = null;
+			if(scroller.height == 0 || !tabBarAutoHide) return;
+			tabBar.height = scroller.height = 0;
+			_validate();
 		}
 		
 		/**
@@ -348,9 +397,9 @@ package components
 		 */
 		public function showTabBar():void
 		{			
-			if(tabBar.visible || !tabBarAutoHide) return;
-			tabBar.visible = true;
-			!bottom ? layoutDataVN.topAnchorDisplayObject = this.tabBar : layoutDataVN.bottomAnchorDisplayObject = this.tabBar;
+			if(isNaN(scroller.height) || !tabBarAutoHide) return;
+			tabBar.height = scroller.height = NaN;
+			_validate();
 		}
 		
 		/**
@@ -365,7 +414,7 @@ package components
 			if(tabBar.dataProvider.length > 1)
 			{
 				var tempIndexID:String; 
-				if(tabBar.selectedIndex != index) 
+				if(this.selectedIndex != index) 
 				{
 					tempIndexID = tabBar.selectedItem.vnID;
 				}
@@ -379,7 +428,10 @@ package components
 				}
 				screenNavigator.removeScreen(tabBar.dataProvider.getItemAt(index).vnID);
 				tabBar.dataProvider.removeItemAt(index);
-				tabBar.selectedIndex = dpIndexOf(tabBar.dataProvider, tempIndexID);
+				isScrollToIndex = false;
+				this.selectedIndex = dpIndexOf(tabBar.dataProvider, tempIndexID);
+				isScrollToIndex = true;
+				_validate();
 				if(tabBar.dataProvider.length == 1) hideTabBar();
 			}
 			else
@@ -391,13 +443,14 @@ package components
 		/**
 		 * Rename a tab at the specified index.
 		 *
-		 * @param index new tab name.
-		 *
 		 * @param index tab position.
+		 *
+		 * @param label new tab name.
 		 */
-		public function renameElement(value:String, index:int):void
+		public function renameElement(index:int, label:String):void
 		{			
-			tabBar.dataProvider.setItemAt( { label: value, vnID: tabBar.dataProvider.getItemAt(index).vnID }, index);
+			tabBar.dataProvider.setItemAt( { label: label, vnID: tabBar.dataProvider.getItemAt(index).vnID }, index);
+			_validate();
 		}
 		
 		/**
@@ -415,8 +468,35 @@ package components
 				var tempItem:Object = tabBar.dataProvider.getItemAt(indexToMove);
 				tabBar.dataProvider.removeItemAt(indexToMove);
 				tabBar.dataProvider.addItemAt(tempItem, newIndex);
-				tabBar.selectedIndex = dpIndexOf(tabBar.dataProvider, tempIndexID);
+				isScrollToIndex = false;
+				this.selectedIndex = dpIndexOf(tabBar.dataProvider, tempIndexID);
+				isScrollToIndex = true;
 			}
+		}
+		
+		/**
+		 * Replace a tab at the specified index.
+		 *
+		 * @param index tab position.
+		 *
+		 * @param name new tab name.
+		 *
+		 * @param screen view class.
+		 *
+		 * @param data data send to the view.
+		 *
+		 * @param transition.
+		 */
+		public function replaceElement(index:int, label:String, screen:Object, data:Object = null, transition:Function = null):void
+		{			
+			renameElement(index, label);
+			if(index == this.selectedIndex) screenNavigator.clearScreen();
+			screenNavigator.removeScreen(tabBar.dataProvider.getItemAt(index).vnID);
+			clear();
+			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, tabBar.dataProvider.getItemAt(index).vnID);
+			screenNavigator.addScreen(tabBar.dataProvider.getItemAt(index).vnID, new ScreenNavigatorItem(navigator));
+			if(index == this.selectedIndex) screenNavigator.showScreen(tabBar.dataProvider.getItemAt(index).vnID);
+			_validate();
 		}
 		
 		private function dpIndexOf(dataProvider:ListCollection, search:String):int
@@ -458,7 +538,7 @@ package components
 		 */
 		public function get activeNavigator():ViewNavigator
 		{
-			return screenNavigator.getScreen(tabBar.dataProvider.getItemAt(tabBar.selectedIndex).vnID).getScreen() as ViewNavigator;
+			return screenNavigator.getScreen(tabBar.dataProvider.getItemAt(this.selectedIndex).vnID).getScreen() as ViewNavigator;
 		}
 		
 		/**
@@ -474,7 +554,7 @@ package components
 		 */
 		public function get tabBarHeight():Number
 		{
-			return tabBar.visible ? tabBar.height : 0;
+			return scroller.height;
 		}
 		
 		/**
@@ -490,11 +570,86 @@ package components
 		private function creationCompleteHandler(event:starling.events.Event):void
 		{
 			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
+			
+			if(tabBarAlign == "top")
+			{
+				layoutDataTB.top = top;
+			}
+			else
+			{
+				layoutDataTB.top = NaN;
+				layoutDataTB.bottom = bottom + top;
+				layoutDataVN.bottom = NaN;
+				layoutDataVN.top = top;
+				layoutDataVN.topAnchorDisplayObject = null;
+				layoutDataVN.bottomAnchorDisplayObject = this.scroller;
+			}
+			
 			if(keyCode && !hasEventListener_keyCode)
 			{
 				hasEventListener_keyCode = true;
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			}
+			scroller.addEventListener(starling.events.Event.RESIZE, resizeHandler);
+			stage.addEventListener(starling.events.Event.RESIZE, resizeHandler);
+		}
+		
+		private function resizeHandler(event:starling.events.Event = null):void
+		{
+			var scrollerWidth:Number = Math.min(scroller.viewPort.width, stage.stageWidth - left - right);
+			if(scroller.width != scrollerWidth) scroller.width = scrollerWidth;
+		}
+		
+		private var _selectedIndex:int = -1;
+		/**
+		 * The index of the currently selected tabBar.
+		 */
+		public function get selectedIndex():int
+		{
+			return tabBar.selectedIndex;
+		}
+		public function set selectedIndex(value:int):void
+		{
+			if(value < 0)
+			{
+				/*tabBar.selectedIndex = -1;
+				screenNavigator.clearScreen();*/
+				return;
+			}
+			if(screenNavigator.activeScreenID != tabBar.dataProvider.getItemAt(value).vnID)
+			{
+				tabBar.selectedIndex = value;
+				scrollToIndex();
+			}
+		}
+		
+		/**
+		 * Scroll to the index currently selected in the tabBar.
+		 */
+		private function scrollToIndex():void
+		{
+			if(!isScrollToIndex) return;
+			if(scroller.viewPort.width > scroller.width)
+			{
+				var tabs:Array = [];
+				for(var i:uint; i<tabBar.numChildren; i++) tabs.push(tabBar.getChildAt(i));
+				tabs.sortOn("x", Array.NUMERIC);
+				var pos:Number = tabs[this.selectedIndex].x + tabs[this.selectedIndex].width;
+				if(pos > scroller.width)
+				{
+					scroller.horizontalScrollPosition = pos - scroller.width;
+				}
+				else
+				{
+					scroller.horizontalScrollPosition = 0;
+				}
+			}
+		}
+		
+		private function _validate():void
+		{
+			tabBar.validate();
+			scroller.validate();
 		}
 	}
 }
