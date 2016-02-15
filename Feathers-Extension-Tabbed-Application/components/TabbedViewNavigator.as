@@ -213,6 +213,7 @@ package components
 			}
 		}
 		
+		private var _tabBarAlign:String = "top";
 		/**
 		 * The vertical alignment of the tabBar.
 		 *
@@ -220,7 +221,14 @@ package components
 		 *
 		 * @default "top".
 		 */
-		public var tabBarAlign:String = "top";
+		public function get tabBarAlign():String
+		{
+			return _tabBarAlign;
+		}
+		public function set tabBarAlign(value:String):void
+		{
+			_tabBarAlign = value;
+		}
 		
 		private var _left:Number = 0;
 		/**
