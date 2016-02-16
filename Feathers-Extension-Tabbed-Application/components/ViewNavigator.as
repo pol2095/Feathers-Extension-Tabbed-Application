@@ -360,9 +360,9 @@ package components
 		 * @private 
 		 */
 		override protected function feathersControl_addedToStageHandler(event:starling.events.Event):void
-        {
-            preinitialize();
-        }
+		{
+			preinitialize();
+		}
 		/**
 		 * override this method to perform other tasks before the application is displayed
 		 *
