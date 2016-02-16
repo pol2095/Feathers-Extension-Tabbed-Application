@@ -471,7 +471,7 @@ package components
 		 *
 		 * @param label new tab name.
 		 */
-		public function renameElement(index:int, label:String):void
+		public function renameElementAt(index:int, label:String):void
 		{			
 			tabBar.dataProvider.setItemAt( { label: label, vnID: tabBar.dataProvider.getItemAt(index).vnID }, index);
 			_validate();
@@ -511,9 +511,9 @@ package components
 		 *
 		 * @param transition.
 		 */
-		public function replaceElement(index:int, label:String, screen:Object, data:Object = null, transition:Function = null):void
+		public function replaceElementAt(index:int, label:String, screen:Object, data:Object = null, transition:Function = null):void
 		{			
-			renameElement(index, label);
+			renameElementAt(index, label);
 			if(index == this.selectedIndex) screenNavigator.clearScreen();
 			screenNavigator.removeScreen(tabBar.dataProvider.getItemAt(index).vnID);
 			clear();
