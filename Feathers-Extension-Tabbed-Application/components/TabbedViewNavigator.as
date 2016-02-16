@@ -694,13 +694,24 @@ package components
 			preinitialize();
 		}
 		/**
-		 * override this method to perform other tasks before the application is displayed
+		 * override this method to perform other tasks before the application is displayed.
 		 *
-		 * @private 
+		 * <listing version="3.0">
+		 * override protected function preinitialize():void
+		 * {
+		 *     //perform other tasks here
+		 *     setTimeout(otherTasks, 5000);
+		 * }
+		 * 
+		 * private function otherTasks():void
+		 * {
+		 *     super.preinitialize();
+		 * }
+		 * </listing> 
 		 */
 		protected function preinitialize():void
 		{
-			super.feathersControl_addedToStageHandler(null);
+			if(!isInitialized) super.feathersControl_addedToStageHandler(null);
 		}
 	}
 }
