@@ -675,5 +675,15 @@ package components
 			tabBar.validate();
 			scroller.validate();
 		}
+		
+		/**
+		 * Return the tab name at the specified index.
+		 *
+		 * @param index tab position
+		 */
+		public function getTabNameAt(index:uint):String
+		{
+			return tabBar.dataProvider.getItemAt(index).label;
+		}
 	}
 }
