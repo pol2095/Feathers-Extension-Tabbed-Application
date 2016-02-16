@@ -355,5 +355,22 @@ package components
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			}
 		}
+		
+		/**
+		 * @private 
+		 */
+		override protected function feathersControl_addedToStageHandler(event:starling.events.Event):void
+        {
+            preinitialize();
+        }
+		/**
+		 * override this method to perform other tasks before the application is displayed
+		 *
+		 * @private 
+		 */
+		protected function preinitialize():void
+		{
+			super.feathersControl_addedToStageHandler(null);
+		}
 	}
 }
