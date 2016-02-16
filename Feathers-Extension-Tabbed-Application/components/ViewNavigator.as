@@ -38,13 +38,13 @@ package components
 		 * 
 		 * @private 
 		 */
-		public var _history:Vector.<String> = new Vector.<String>;
+		public var _history:Vector.<String> = new Vector.<String>();
 		/**
 		 * Persistence data shared object
 		 * 
 		 * @private 
 		 */
-		public var _historyData:Vector.<Object> = new Vector.<Object>;
+		public var _historyData:Vector.<Object> = new Vector.<Object>();
 		private var my_so:SharedObject;
 		private var init:Boolean;
 		/**
@@ -145,14 +145,16 @@ package components
 		
 		private function pushFirstView(screen:Object, data:Object = null, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
 		{
-			var my_soData:Object = owner ? owner.my_so.data : my_so.data;
-			if(my_soData.viewsHistory)
+			if(!owner)
 			{
-				if(!owner)
+				if(my_so.data.viewsHistory)
 				{
 					_history = Vector.<String>(my_so.data.viewsHistory);
 					_historyData = Vector.<Object>(my_so.data.viewsHistoryData);
 				}
+			}
+			if(_history)
+			{
 				var length:uint = _history.length;
 				for(var i:uint = 0; i < length; i++)
 				{

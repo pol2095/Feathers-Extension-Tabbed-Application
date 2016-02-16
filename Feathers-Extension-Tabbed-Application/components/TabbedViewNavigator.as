@@ -281,16 +281,15 @@ package components
 			if(!tabBar.dataProvider)
 			{
 				tabBar.dataProvider = new ListCollection();
-				init = true;
 				if(!my_so.data.viewsHistory)
 				{
-					init = false;
 					var vnID:String = newID();
 					createElement(label, vnID, screen, data, transition);
 					this.selectedIndex = 0;
 				}
 				else
 				{
+					init = true;
 					var tabBarHistory:Vector.<Object> = Vector.<Object>(my_so.data.tabBarHistory);
 					var navigatorsHistory:Vector.<Object> = Vector.<Object>(my_so.data.viewsHistory);
 					for(var i:uint = 0; i < tabBarHistory.length; i++)
@@ -306,6 +305,25 @@ package components
 			}
 		}
 		
+		/**
+		 * Add a new tab to the navigation bar at the specified index.
+		 *
+		 * @param index tab position.
+		 *
+		 * @param label tab name.
+		 *
+		 * @param screen view class.
+		 *
+		 * @param data data send to the view.
+		 *
+		 * @param transition.
+		 */
+		public function addElementAt(index:uint, label:String, screen:Object, data:Object = null, transition:Function = null):void
+		{
+			addElement(label, screen, data, transition);
+			if(this.length != 1) moveElement(this.length-1, index);
+		}
+		
 		private function createElement(label:String, vnID:String, screen:Object, data:Object, transition:Function, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
 		{
 			tabBar.dataProvider.addItem( { label: label, vnID: vnID } );
@@ -317,12 +335,10 @@ package components
 		
 		private function newID():String
 		{
-			var ids:Vector.<String> = screenNavigator.getScreenIDs().sort(1);
-			for (var i:uint=0; i < ids.length; i++)
-			{
-				if("vn"+(i+1) != ids[i]) break;
-			}
-			return "vn"+(i+1);
+			var ids:Vector.<String> = screenNavigator.getScreenIDs();
+			var i:uint;
+			while(ids.indexOf("vn"+i) != -1) i++;
+			return "vn"+i;
 		}
 		
 		private function tabBar_changeHandler( event:starling.events.Event ):void
@@ -417,7 +433,7 @@ package components
 		 *
 		 * @param index tab position.
 		 */
-		public function removeElement(index:int):void
+		public function removeElementAt(index:int):void
 		{			
 			if(tabBar.dataProvider.length > 1)
 			{
