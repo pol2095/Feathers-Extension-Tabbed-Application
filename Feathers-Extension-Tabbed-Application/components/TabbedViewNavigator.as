@@ -437,23 +437,23 @@ package components
 		{			
 			if(tabBar.dataProvider.length > 1)
 			{
-				var tempIndexID:String; 
+				var selectedItemID:String; 
 				if(this.selectedIndex != index) 
 				{
-					tempIndexID = tabBar.selectedItem.vnID;
+					selectedItemID = tabBar.selectedItem.vnID;
 				}
 				else if(index == tabBar.dataProvider.length-1)
 				{
-					tempIndexID = tabBar.dataProvider.getItemAt(index-1).vnID;
+					selectedItemID = tabBar.dataProvider.getItemAt(index-1).vnID;
 				}
 				else
 				{
-					tempIndexID = tabBar.dataProvider.getItemAt(index+1).vnID;
+					selectedItemID = tabBar.dataProvider.getItemAt(index+1).vnID;
 				}
 				screenNavigator.removeScreen(tabBar.dataProvider.getItemAt(index).vnID);
 				tabBar.dataProvider.removeItemAt(index);
 				isScrollToIndex = false;
-				this.selectedIndex = dpIndexOf(tabBar.dataProvider, tempIndexID);
+				this.selectedIndex = dpIndexOf(tabBar.dataProvider, selectedItemID);
 				isScrollToIndex = true;
 				_validate();
 				if(tabBar.dataProvider.length == 1) hideTabBar();
@@ -488,12 +488,12 @@ package components
 		{			
 			if(tabBar.dataProvider.length > 1 && indexToMove != newIndex)
 			{
-				var tempIndexID:String = tabBar.selectedItem.vnID;
-				var tempItem:Object = tabBar.dataProvider.getItemAt(indexToMove);
+				var selectedItemID:String = tabBar.selectedItem.vnID;
+				var itemToMove:Object = tabBar.dataProvider.getItemAt(indexToMove);
 				tabBar.dataProvider.removeItemAt(indexToMove);
-				tabBar.dataProvider.addItemAt(tempItem, newIndex);
+				tabBar.dataProvider.addItemAt(itemToMove, newIndex);
 				isScrollToIndex = false;
-				this.selectedIndex = dpIndexOf(tabBar.dataProvider, tempIndexID);
+				this.selectedIndex = dpIndexOf(tabBar.dataProvider, selectedItemID);
 				isScrollToIndex = true;
 			}
 		}
@@ -681,9 +681,21 @@ package components
 		 *
 		 * @param index tab position
 		 */
-		public function getTabNameAt(index:uint):String
+		public function getElementNameAt(index:uint):String
 		{
 			return tabBar.dataProvider.getItemAt(index).label;
+		}
+		
+		/**
+		 * The active tab name.
+		 */
+		public function get activeElementName():String
+		{
+			return getElementNameAt(this.selectedIndex);
+		}
+		public function set activeElementName(value:String):void
+		{
+			renameElementAt(this.selectedIndex, value);
 		}
 		
 		/**
