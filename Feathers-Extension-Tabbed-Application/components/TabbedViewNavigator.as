@@ -790,21 +790,7 @@ package components
 		
 		private function onTouch(event:TouchEvent):void
 		{
-			var touchBegan:Touch = event.getTouch(stage, TouchPhase.BEGAN);
-			if (touchBegan)
-			{
-				activeNavigator.beginMove( touchBegan.getLocation(stage) );
-			}
-			var touchMoved:Touch = event.getTouch(stage, TouchPhase.MOVED);
-			if (touchMoved)
-			{
-				activeNavigator.onMove( touchMoved.getLocation(stage) );
-			}
-			var touchEnded:Touch = event.getTouch(stage, TouchPhase.ENDED);
-			if (touchEnded)
-			{
-				activeNavigator.onMouseUp( touchEnded.getLocation(stage) );
-			}
+			activeNavigator.onTouch( event );
 		}
 	}
 }

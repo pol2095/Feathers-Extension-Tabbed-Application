@@ -436,7 +436,10 @@ package components
 			tempScreen.x = movingBack ? this.activeScreen.x - navigatorWidth : this.activeScreen.x + navigatorWidth;
 		}
 		
-		private function onTouch(event:TouchEvent):void
+		/**
+		 * @private 
+		 */
+		public function onTouch(event:TouchEvent):void
 		{
 			var touchBegan:Touch = event.getTouch(stage, TouchPhase.BEGAN);
 			if (touchBegan)
@@ -446,7 +449,7 @@ package components
 			var touchMoved:Touch = event.getTouch(stage, TouchPhase.MOVED);
 			if (touchMoved)
 			{
-				onMove( touchMoved.getLocation(stage) );
+				if(isMoving) onMove( touchMoved.getLocation(stage) );
 			}
 			var touchEnded:Touch = event.getTouch(stage, TouchPhase.ENDED);
 			if (touchEnded)
@@ -459,10 +462,7 @@ package components
 		private var isMoving:Boolean;
 		private var movingBack:Boolean;
 		private var hasMoveEnterFrame:Boolean;
-		/**
-		 * @private 
-		 */
-		public function beginMove( mouse:Point ):void
+		private function beginMove( mouse:Point ):void
 		{
 			if(hasMoveEnterFrame)
 			{
@@ -503,12 +503,8 @@ package components
 			isMoving = true;
 			previousMoveX = startMoveX = mouse.x;
 		}
-		/**
-		 * @private 
-		 */
-		public function onMove( mouse:Point ):void
+		private function onMove( mouse:Point ):void
 		{
-			if(!isMoving) return;
 			if(mouse.x < 0 || mouse.y < 0 || mouse.x > stage.stageWidth || mouse.y > stage.stageHeight)
 			{
 				onMouseUp();
@@ -572,10 +568,7 @@ package components
 				previousMoveX = mouse.x;
 			}
 		}
-		/**
-		 * @private 
-		 */
-		public function onMouseUp( mouse:Point = null ):void
+		private function onMouseUp( mouse:Point = null ):void
 		{
 			isMoving = false;
 			
