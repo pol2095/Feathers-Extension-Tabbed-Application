@@ -467,7 +467,7 @@ package components
 			if(hasMoveEnterFrame)
 			{
 				hasMoveEnterFrame = false;
-				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, onspeedBackReleaseSwipe);
+				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
 			}
 			if(!swipeView) return;
 			var left:Number = 0, right:Number, top:Number = 0, bottom:Number;
@@ -576,10 +576,10 @@ package components
 			if(!hasMoveEnterFrame)
 			{
 				hasMoveEnterFrame = true;
-				this.addEventListener(EnterFrameEvent.ENTER_FRAME, onspeedBackReleaseSwipe);
+				this.addEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
 			}
 		}
-		private function onspeedBackReleaseSwipe(event:EnterFrameEvent):void
+		private function onBackReleaseSwipe(event:EnterFrameEvent):void
 		{
 			if(!movingBack)
 			{
@@ -610,7 +610,7 @@ package components
 			if(hasMoveEnterFrame)
 			{
 				hasMoveEnterFrame = false;
-				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, onspeedBackReleaseSwipe);
+				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
 			}
 			if(isMove) onMouseUp();
 		}
