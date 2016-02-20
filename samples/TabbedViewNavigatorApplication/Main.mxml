@@ -4,8 +4,8 @@
 	theme="feathers.themes.MetalWorksDesktopTheme"
 	creationComplete="creationCompleteHandler()"
 	xmlns:components="components.*"
-	persistNavigatorState="true"><!-- keyCode="left" tabBarAutoHide="false" bottom="100" top="100" -->
-	
+	swipeView="true"
+	persistNavigatorState="true"><!-- keyCode="left" tabBarAutoHide="false" tabBarAlign="bottom" bottom="100" top="100" left="50" right="50" -->	
 	<fx:Script>
 		<![CDATA[
 			private function creationCompleteHandler():void

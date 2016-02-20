@@ -4,6 +4,7 @@
 	creationComplete="creationCompleteHandler()"
 	theme="feathers.themes.MetalWorksDesktopTheme"
 	xmlns:components="components.*"
+	swipeView="true"
 	persistNavigatorState="true"><!-- keyCode="left" -->
  
 	<fx:Script>
