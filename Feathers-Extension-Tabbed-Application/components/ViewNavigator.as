@@ -10,7 +10,7 @@ package components
 	import feathers.controls.StackScreenNavigatorItem;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getDefinitionByName;
-	import feathers.controls.StackScreenNavigator;
+	//import feathers.controls.StackScreenNavigator;
 	import flash.desktop.NativeApplication;
 	import flash.events.Event;
 	import flash.net.SharedObject;
@@ -20,6 +20,17 @@ package components
 	import starling.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	import feathers.events.FeathersEventType;
+	import feathers.controls.IScreen;
+	import feathers.controls.supportClasses.IScreenNavigatorItem;
+	import starling.events.TouchEvent;
+	import starling.events.TouchPhase;
+	import flash.geom.Point;
+	import starling.events.Touch;
+	import flash.events.MouseEvent;
+	import starling.events.EnterFrameEvent;
+	import feathers.core.FocusManager;
+	import feathers.controls.TextArea;
+	import feathers.controls.TextInput;
 	
 	/**
 	 * A "view stack"-like container that supports navigation between views
@@ -94,13 +105,13 @@ package components
 		/**
 		 * Constructor. 
 		 */
-		public function ViewNavigator(screen:Object = null, data:Object = null, transition:Function = null, owner:Object = null, vnID:String = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null)
+		public function ViewNavigator(screen:Object = null, data:Object = null, transition:Function = null, owner:Object = null, vnID:String = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null, position:uint = 0)
 		{
 			super();
 			this.owner = owner;
 			this.vnID = vnID;
 			if(screen) {
-				pushView(screen, data, null, transition, _history, _historyData);
+				_pushView(screen, data, null, transition, _history, _historyData, position);
 				
 				this.pushTransition = Slide.createSlideLeftTransition();
 				this.popTransition = Slide.createSlideRightTransition();
@@ -143,7 +154,7 @@ package components
 			}
 		}
 		
-		private function pushFirstView(screen:Object, data:Object = null, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
+		private function pushFirstView(screen:Object, data:Object = null, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null, position:uint = 0):void
 		{
 			if(!owner)
 			{
@@ -151,6 +162,7 @@ package components
 				{
 					_history = Vector.<String>(my_so.data.viewsHistory);
 					_historyData = Vector.<Object>(my_so.data.viewsHistoryData);
+					position = my_so.data.viewsPosition;
 				}
 			}
 			if(_history)
@@ -158,12 +170,16 @@ package components
 				var length:uint = _history.length;
 				for(var i:uint = 0; i < length; i++)
 				{
-					pushView( getDefinitionByName( getHistoryClassName(_history[i]) ), _historyData[i], null, transition, null, null, true);
+					_pushView( getDefinitionByName( getHistoryClassName(_history[i]) ), _historyData[i], null, transition, null, null, position, true);
+				}
+				for(i = position+1; i < length; i++)
+				{
+					popView();
 				}
 			}
 			else
 			{
-				pushView(screen, data, null, transition, null, null, true);
+				_pushView(screen, data, null, transition, null, null, position, true);
 			}
 		}
 		
@@ -174,22 +190,20 @@ package components
 		 *
 		 * @param data Properties saved in a view.
 		 *
-		 * @param savedPreviousScreenProperties data send to the previous view. [for data properties is automatic]
-		 *
 		 * @param transition.
-		 *
-		 * @param _history. [don't use]
-		 *
-		 * @param _historyData. [don't use]
-		 *
-		 * @param firstView. [don't use]
 		 */
-		public function pushView(screen:Object, data:Object = null, savedPreviousScreenProperties:Object = null, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null, firstView:Boolean = false):void
+		public function pushView(screen:Object, data:Object = null, transition:Function = null):void
+		{
+			removeScreens();
+			_pushView(screen, data, null, transition);
+		}
+		
+		private function _pushView(screen:Object, data:Object = null, savedPreviousScreenProperties:Object = null, transition:Function = null, _history:Vector.<String> = null, _historyData:Vector.<Object> = null, position:uint = 0, firstView:Boolean = false):void
 		{
 			if(!init)
 			{
 				init = true;
-				pushFirstView(screen, data, transition, _history, _historyData);
+				pushFirstView(screen, data, transition, _history, _historyData, position);
 				return;
 			}
 			if(!firstView)
@@ -199,7 +213,6 @@ package components
 				if(persistNavigatorState) historyDataUpdate();
 			}
 			var id:String = screenId( getQualifiedClassName(screen) );
-			removeScreens();
 			var item:StackScreenNavigatorItem = new StackScreenNavigatorItem( screen );
 			item.properties.data = data;
 			this.addScreen( id, item );
@@ -213,7 +226,7 @@ package components
 		 */
 		public function popView(transition:Function = null):DisplayObject
 		{
-			return (_history.length > 1) ? super.popScreen(transition) : null;
+			return (_history.length > 1) ? popScreen(transition) : null;
 		}
 		
 		/**
@@ -272,10 +285,10 @@ package components
 			if(owner) return;
 			if(persistNavigatorState)
 			{
-				removeScreens();
 				my_so.data.viewsHistory = _history;
 				historyDataUpdate();
 				my_so.data.viewsHistoryData = _historyData;
+				my_so.data.viewsPosition = position;
 				my_so.flush();
 			}
 		}
@@ -292,6 +305,7 @@ package components
 			{
 				delete my_so.data.viewsHistory;
 				delete my_so.data.viewsHistoryData;
+				delete my_so.data.viewsPosition;
 			}
 		}
 		
@@ -354,6 +368,7 @@ package components
 				hasEventListener_keyCode = true;
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			}
+			if(!owner) stage.addEventListener(TouchEvent.TOUCH, onTouch);
 		}
 		
 		/**
@@ -364,7 +379,7 @@ package components
 			preinitialize();
 		}
 		/**
-		 * override this method to perform other tasks before the application is displayed.
+		 * Override this method to perform other tasks before the application is displayed.
 		 *
 		 * <listing version="3.0">
 		 * override protected function preinitialize():void
@@ -383,6 +398,297 @@ package components
 		protected function preinitialize():void
 		{
 			if(!isInitialized) super.feathersControl_addedToStageHandler(null);
+		}
+		
+		/**
+		 * @private
+		 */
+		public var tempScreen:DisplayObject;
+		private function showViewInternal(id:String, transition:Function = null, properties:Object = null):void
+		{
+			if(!this.hasScreen(id))
+			{
+				throw new ArgumentError("Screen with id '" + id + "' cannot be shown because it has not been defined.");
+			}
+
+			var item:IScreenNavigatorItem = IScreenNavigatorItem(this._screens[id]);
+			tempScreen = item.getScreen();
+			var tempScreenID:String = id;
+			for(var propertyName:String in properties)
+			{
+				tempScreen[propertyName] = properties[propertyName];
+			}
+			if(tempScreen is IScreen)
+			{
+				var screen:IScreen = IScreen(tempScreen);
+				screen.x = 0;
+				screen.y = 0;
+				screen.screenID = tempScreenID;
+				screen.owner = this; //subclasses will implement the interface
+			}
+			tempScreen_resizeHandler();
+			tempScreen.addEventListener(starling.events.Event.RESIZE, tempScreen_resizeHandler);
+			this.addChild(tempScreen);
+		}
+		private function tempScreen_resizeHandler(event:starling.events.Event = null):void
+		{
+			var navigatorWidth:Number = owner ? stage.stageWidth - owner.left - owner.right : stage.stageWidth;
+			tempScreen.width = navigatorWidth;
+			tempScreen.x = movingBack ? this.activeScreen.x - navigatorWidth : this.activeScreen.x + navigatorWidth;
+		}
+		
+		private function onTouch(event:TouchEvent):void
+		{
+			var touchBegan:Touch = event.getTouch(stage, TouchPhase.BEGAN);
+			if (touchBegan)
+			{
+				beginMove( touchBegan.getLocation(stage) );
+			}
+			var touchMoved:Touch = event.getTouch(stage, TouchPhase.MOVED);
+			if (touchMoved)
+			{
+				onMove( touchMoved.getLocation(stage) );
+			}
+			var touchEnded:Touch = event.getTouch(stage, TouchPhase.ENDED);
+			if (touchEnded)
+			{
+				onMouseUp( touchEnded.getLocation(stage) );
+			}
+		}
+		private var startMoveX:Number;
+		private var previousMoveX:Number;
+		private var isMoving:Boolean;
+		private var movingBack:Boolean;
+		private var hasMoveEnterFrame:Boolean;
+		/**
+		 * @private 
+		 */
+		public function beginMove( mouse:Point ):void
+		{
+			if(hasMoveEnterFrame)
+			{
+				hasMoveEnterFrame = false;
+				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, onspeedBackReleaseSwipe);
+			}
+			if(!swipeView) return;
+			var left:Number = 0, right:Number, top:Number = 0, bottom:Number;
+			if(owner)
+			{
+				left = owner.left;
+				right = stage.stageWidth - owner.right;
+				top = (owner.tabBarAlign == "top") ? owner.top + owner.tabBarHeight : owner.top;
+				bottom = isNaN(owner.bottom) ? 0 : owner.bottom;
+				bottom = (owner.tabBarAlign == "bottom") ? stage.stageHeight - (bottom + owner.tabBarHeight) : stage.stageHeight - bottom;
+			}
+			else
+			{
+				right = stage.stageWidth;
+				bottom = stage.stageHeight;
+			}
+			if(mouse.x < left || mouse.y < top || mouse.x > right || mouse.y > bottom) return;
+			for each(var _class:String in (this.activeScreen as Object)._excludeClassesForSlide) //exclude classes
+			{
+				if(getQualifiedClassName(FocusManager.focus) == _class && _class != "") return;
+			}
+			for each(var object:String in (this.activeScreen as Object)._excludeComponentsForSlide) //exclude components
+			{
+				if((this.activeScreen as Object).hasOwnProperty(object))
+				{
+					if(FocusManager.focus == (this.activeScreen as Object)[object]) return;
+				}
+				else
+				{
+					throw new Error("The components \""+object+"\" doesn't exist in \""+getQualifiedClassName( getDefinitionByName( getHistoryClassName( this.activeScreenID ) ) )+"\" class.");
+				}
+			}
+			isMoving = true;
+			previousMoveX = startMoveX = mouse.x;
+		}
+		/**
+		 * @private 
+		 */
+		public function onMove( mouse:Point ):void
+		{
+			if(!isMoving) return;
+			if(mouse.x < 0 || mouse.y < 0 || mouse.x > stage.stageWidth || mouse.y > stage.stageHeight)
+			{
+				onMouseUp();
+				return;
+			}
+			if(!tempScreen)
+			{
+				if(mouse.x < startMoveX - latencyToStartSwipe) //next
+				{
+					if(position == _history.length-1) return;
+					previousMoveX = mouse.x;
+					showViewInternal(_history[position+1], null, {data : _historyData[position+1]});
+					tempScreen.x = stage.stageWidth;
+					movingBack = false;
+				}
+				else if(mouse.x > startMoveX + latencyToStartSwipe) //previous
+				{
+					if(position == 0) return;
+					previousMoveX = mouse.x;
+					showViewInternal(_history[position-1], null, {data : _historyData[position-1]});
+					tempScreen.x = -stage.stageWidth;
+					movingBack = true;
+				}
+			}
+			else
+			{
+				this.activeScreen.x += (mouse.x - previousMoveX ) * speedSwipe;
+				tempScreen.x += (mouse.x - previousMoveX ) * speedSwipe;
+				if(mouse.x < previousMoveX)
+				{
+					if(!movingBack && tempScreen.x < 0) //next and left
+					{
+						tempScreen.x = 0;
+						this._stack[this._stack.length] = new StackItem(this.activeScreenID, null);
+						this.clearScreenInternal();
+						this._activeScreen = tempScreen;
+						this._activeScreenID = (tempScreen as IScreen).screenID;
+						removeTemp(true);
+					}
+					else if(movingBack && this._activeScreen.x < 0) //previous and left
+					{
+						this._activeScreen.x = 0;
+					}
+				}
+				else if(mouse.x > previousMoveX)
+				{
+					if(movingBack && tempScreen.x > 0)  //previous and right
+					{
+						tempScreen.x = 0;
+						this._stack.pop();
+						this.clearScreenInternal();
+						this._activeScreen = tempScreen;
+						this._activeScreenID = (tempScreen as IScreen).screenID;
+						removeTemp(true);
+					}
+					else if(!movingBack && this._activeScreen.x > 0) //next and right
+					{
+						this._activeScreen.x = 0;
+					}
+				}
+				previousMoveX = mouse.x;
+			}
+		}
+		/**
+		 * @private 
+		 */
+		public function onMouseUp( mouse:Point = null ):void
+		{
+			isMoving = false;
+			
+			if(!tempScreen) return;
+			if(!hasMoveEnterFrame)
+			{
+				hasMoveEnterFrame = true;
+				this.addEventListener(EnterFrameEvent.ENTER_FRAME, onspeedBackReleaseSwipe);
+			}
+		}
+		private function onspeedBackReleaseSwipe(event:EnterFrameEvent):void
+		{
+			if(!movingBack)
+			{
+				tempScreen.x += speedBackReleaseSwipe;
+				this.activeScreen.x += speedBackReleaseSwipe;
+				if(this._activeScreen.x > 0) //next and right
+				{
+					this._activeScreen.x = 0;
+					removeTemp();
+				}
+			}
+			else
+			{
+				tempScreen.x -= speedBackReleaseSwipe;
+				this.activeScreen.x -= speedBackReleaseSwipe;
+				if(this._activeScreen.x < 0) //previous and left
+				{
+					this._activeScreen.x = 0;
+					removeTemp();
+				}
+			}
+		}
+		private function removeTemp(isMove:Boolean = false):void
+		{
+			if(tempScreen != this.activeScreen) this.removeChild(tempScreen);
+			tempScreen.removeEventListener(Event.RESIZE, tempScreen_resizeHandler);
+			tempScreen = null;
+			if(hasMoveEnterFrame)
+			{
+				hasMoveEnterFrame = false;
+				this.removeEventListener(EnterFrameEvent.ENTER_FRAME, onspeedBackReleaseSwipe);
+			}
+			if(isMove) onMouseUp();
+		}
+		
+		private var _swipeView:Boolean;
+		/**
+		 * Swipe to change View
+		 *
+		 * [ViewNavigatorApplication-only].
+		 *
+		 * @default false
+		 */
+		public function get swipeView():Boolean
+		{
+			return owner ? owner.swipeView : _swipeView;
+		}
+		public function set swipeView(value:Boolean):void
+		{
+			_swipeView = value;
+		}
+		
+		private var _speedSwipe:Number = 3;
+		/**
+		 * Swipe speed to change View
+		 *
+		 * [ViewNavigatorApplication-only].
+		 *
+		 * @default 3
+		 */
+		public function get speedSwipe():Number
+		{
+			return owner ? owner.speedSwipe : _speedSwipe;
+		}
+		public function set speedSwipe(value:Number):void
+		{
+			_speedSwipe = value;
+		}
+		
+		private var _speedBackReleaseSwipe:uint = 10;
+		/**
+		 * Speed back in pixels when you release swipe
+		 *
+		 * [ViewNavigatorApplication-only].
+		 *
+		 * @default 10
+		 */
+		public function get speedBackReleaseSwipe():uint
+		{
+			return owner ? owner.speedBackReleaseSwipe : _speedBackReleaseSwipe;
+		}
+		public function set speedBackReleaseSwipe(value:uint):void
+		{
+			_speedBackReleaseSwipe = value;
+		}
+		
+		private var _latencyToStartSwipe:uint = 10;
+		/**
+		 * The latency in pixels to start swipe
+		 *
+		 * [ViewNavigatorApplication-only].
+		 *
+		 * @default 10
+		 */
+		public function get latencyToStartSwipe():uint
+		{
+			return owner ? owner.latencyToStartSwipe : _latencyToStartSwipe;
+		}
+		public function set latencyToStartSwipe(value:uint):void
+		{
+			_latencyToStartSwipe = value;
 		}
 	}
 }

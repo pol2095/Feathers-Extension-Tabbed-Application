@@ -23,6 +23,9 @@ package components
 	import feathers.events.FeathersEventType;
 	import feathers.controls.ScrollContainer;
 	import feathers.controls.ToggleButton;
+	import starling.events.TouchEvent;
+	import starling.events.TouchPhase;
+	import starling.events.Touch
 	
 	/**
 	 * A container takes a <code>tab Bar</code> and <code>ViewNavigator</code>s , based on <code>LayoutGroup</code>.
@@ -294,7 +297,7 @@ package components
 					var navigatorsHistory:Vector.<Object> = Vector.<Object>(my_so.data.viewsHistory);
 					for(var i:uint = 0; i < tabBarHistory.length; i++)
 					{
-						createElement(tabBarHistory[i].label, tabBarHistory[i].vnID, screen, data, transition, Vector.<String>(navigatorsHistory[i]._history), Vector.<Object>(navigatorsHistory[i]._historyData));
+						createElement(tabBarHistory[i].label, tabBarHistory[i].vnID, screen, data, transition, Vector.<String>(navigatorsHistory[i]._history), Vector.<Object>(navigatorsHistory[i]._historyData), navigatorsHistory[i].position);
 					}
 					this.selectedIndex = my_so.data.tabBarSelected;
 				}
@@ -324,10 +327,10 @@ package components
 			if(this.length != 1) moveElement(this.length-1, index);
 		}
 		
-		private function createElement(label:String, vnID:String, screen:Object, data:Object, transition:Function, _history:Vector.<String> = null, _historyData:Vector.<Object> = null):void
+		private function createElement(label:String, vnID:String, screen:Object, data:Object, transition:Function, _history:Vector.<String> = null, _historyData:Vector.<Object> = null, position:uint = 0):void
 		{
 			tabBar.dataProvider.addItem( { label: label, vnID: vnID } );
-			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, vnID, _history, _historyData);
+			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, vnID, _history, _historyData, position);
 			screenNavigator.addScreen(vnID, new ScreenNavigatorItem(navigator));
 			_validate();
 			(tabBar.dataProvider.length == 1) ? hideTabBar() : showTabBar();
@@ -343,7 +346,6 @@ package components
 		
 		private function tabBar_changeHandler( event:starling.events.Event ):void
 		{
-			//if(this.selectedIndex < 0) return;
 			if(screenNavigator.activeScreenID != tabBar.selectedItem.vnID) screenNavigator.showScreen(tabBar.selectedItem.vnID);
 		}
 		
@@ -366,9 +368,8 @@ package components
 				{
 					tabBarHistory.push( { label:tabBar.dataProvider.getItemAt(i).label, vnID:tabBar.dataProvider.getItemAt(i).vnID } );
 					navigator = screenNavigator.getScreen(tabBar.dataProvider.getItemAt(i).vnID).getScreen() as ViewNavigator;
-					navigator.removeScreens();
 					navigator.historyDataUpdate();
-					navigatorsHistory.push( { _history: navigator._history, _historyData: navigator._historyData } );
+					navigatorsHistory.push( { _history: navigator._history, _historyData: navigator._historyData, position: navigator.position } );
 				}
 				my_so.data.tabBarSelected = this.selectedIndex;
 				my_so.data.tabBarHistory = tabBarHistory;
@@ -616,6 +617,8 @@ package components
 			}
 			scroller.addEventListener(starling.events.Event.RESIZE, resizeHandler);
 			stage.addEventListener(starling.events.Event.RESIZE, resizeHandler);
+			
+			stage.addEventListener(TouchEvent.TOUCH, onTouch);
 		}
 		
 		private function resizeHandler(event:starling.events.Event = null):void
@@ -724,6 +727,85 @@ package components
 		protected function preinitialize():void
 		{
 			if(!isInitialized) super.feathersControl_addedToStageHandler(null);
+		}
+		
+		private var _swipeView:Boolean;
+		/**
+		 * swipe to change View
+		 *
+		 * @default false
+		 */
+		public function get swipeView():Boolean
+		{
+			return _swipeView;
+		}
+		public function set swipeView(value:Boolean):void
+		{
+			_swipeView = value;
+		}
+		
+		private var _speedSwipe:Number = 3;
+		/**
+		 * Swipe speed to change View.
+		 *
+		 * @default 3
+		 */
+		public function get speedSwipe():Number
+		{
+			return _speedSwipe;
+		}
+		public function set speedSwipe(value:Number):void
+		{
+			_speedSwipe = value;
+		}
+		
+		private var _speedBackReleaseSwipe:uint = 10;
+		/**
+		 * Speed back in pixels when you release swipe.
+		 *
+		 * @default 10
+		 */
+		public function get speedBackReleaseSwipe():uint
+		{
+			return _speedBackReleaseSwipe;
+		}
+		public function set speedBackReleaseSwipe(value:uint):void
+		{
+			_speedBackReleaseSwipe = value;
+		}
+		
+		private var _latencyToStartSwipe:uint = 10;
+		/**
+		 * The latency in pixels to start swipe.
+		 *
+		 * @default 10
+		 */
+		public function get latencyToStartSwipe():uint
+		{
+			return _latencyToStartSwipe;
+		}
+		public function set latencyToStartSwipe(value:uint):void
+		{
+			_latencyToStartSwipe = value;
+		}
+		
+		private function onTouch(event:TouchEvent):void
+		{
+			var touchBegan:Touch = event.getTouch(stage, TouchPhase.BEGAN);
+			if (touchBegan)
+			{
+				activeNavigator.beginMove( touchBegan.getLocation(stage) );
+			}
+			var touchMoved:Touch = event.getTouch(stage, TouchPhase.MOVED);
+			if (touchMoved)
+			{
+				activeNavigator.onMove( touchMoved.getLocation(stage) );
+			}
+			var touchEnded:Touch = event.getTouch(stage, TouchPhase.ENDED);
+			if (touchEnded)
+			{
+				activeNavigator.onMouseUp( touchEnded.getLocation(stage) );
+			}
 		}
 	}
 }

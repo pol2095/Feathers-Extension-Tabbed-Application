@@ -34,6 +34,36 @@ package components
 		}
 		
 		/**
+		 * @private
+		 */
+		public var _excludeComponentsForSlide:Vector.<String> = new <String>[];
+		/**
+		 * Exlude components to slide view scroll.
+		 *
+		 * <listing version="3.0">
+		 * textInput, textArea
+		 * </listing> 
+		 */
+		public function set excludeComponentsForSlide(value:String):void
+		{
+			_excludeComponentsForSlide = Vector.<String>(value.replace(/, /g, ",").split(","));
+		}
+		
+		/**
+		 * @private
+		 */
+		public var _excludeClassesForSlide:Vector.<String> = new <String>["feathers.controls::TextInput", "feathers.controls::TextArea"];
+		/**
+		 * Exlude components to slide view scroll.
+		 *
+		 * @default feathers.controls::TextInput, feathers.controls::TextArea
+		 */
+		public function set excludeClassesForSlide(value:String):void
+		{
+			_excludeClassesForSlide = Vector.<String>(value.replace(/, /g, ",").split(","));
+		}
+		
+		/**
 		 * Constructor.
 		 */
 		public function View()
