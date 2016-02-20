@@ -53,7 +53,7 @@ package components
 		 */
 		public var _excludeClassesForSlide:Vector.<String> = new <String>["feathers.controls::TextInput", "feathers.controls::TextArea"];
 		/**
-		 * Exlude components to slide view scroll.
+		 * Exlude classes to slide view scroll.
 		 *
 		 * @default feathers.controls::TextInput, feathers.controls::TextArea
 		 */
