@@ -2,7 +2,7 @@
 
 Say hello to [Feathers-Extension-Tabbed-Application](http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/).
 This project adds two components (TabbedViewNavigatorApplication and ViewNavigatorApplication) to Feathers UI, a library of light-weight, skinnable, and extensible UI controls for mobile and desktop. The components run on Starling Framework and the Adobe Flash runtimes, offering blazing fast GPU powered graphics to create a smooth and responsive experience. Build completely standalone, native applications on iOS, Android, Windows, and Mac OS X, or target Adobe Flash Player in desktop browsers.<br />
-This components adds persitence manager and swipe views (or screens) to feathers.controls.StackScreenNavigator.
+This components adds persitence manager and swipe views (or screens to navigate in the history of views) to feathers.controls.StackScreenNavigator.
 
 ## Quick Links
 
