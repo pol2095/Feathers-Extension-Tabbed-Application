@@ -392,8 +392,7 @@ package components
 		 * {
 		 *     left = 100;
 		 *     super.preinitialize();
-		 * }
-		 * </listing> 
+		 * }</listing> 
 		 */
 		protected function preinitialize():void
 		{

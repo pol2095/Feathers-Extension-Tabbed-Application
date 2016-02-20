@@ -41,8 +41,7 @@ package components
 		 * Exlude components to slide view scroll.
 		 *
 		 * <listing version="3.0">
-		 * textInput, textArea
-		 * </listing> 
+		 * textInput, textArea</listing> 
 		 */
 		public function set excludeComponentsForSlide(value:String):void
 		{

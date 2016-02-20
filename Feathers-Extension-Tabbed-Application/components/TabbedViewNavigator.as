@@ -721,8 +721,7 @@ package components
 		 * private function otherTasks():void
 		 * {
 		 *     super.preinitialize();
-		 * }
-		 * </listing> 
+		 * }</listing> 
 		 */
 		protected function preinitialize():void
 		{
