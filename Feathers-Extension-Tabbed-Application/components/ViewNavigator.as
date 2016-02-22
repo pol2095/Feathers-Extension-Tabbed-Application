@@ -18,6 +18,7 @@ package components
 	import starling.animation.Transitions;
 	import starling.core.Starling;
 	import starling.events.KeyboardEvent;
+	import starling.events.Event;
 	import flash.ui.Keyboard;
 	import feathers.events.FeathersEventType;
 	import feathers.controls.IScreen;
@@ -123,7 +124,7 @@ package components
 				this.addEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
 			}
 		}
-		
+
 		private var hasEventListener_persistNavigatorState:Boolean;
 		private var _persistNavigatorState:Boolean;
 		/**
@@ -322,7 +323,10 @@ package components
 			NativeApplication.nativeApplication.exit(errorCode);
 		}
 		
-		private function getHistoryClassName(value:String):String
+		/**
+		 * @private
+		 */
+		public function getHistoryClassName(value:String):String
 		{
 			return owner ? value.substring(value.indexOf("_")+1, value.lastIndexOf("_")) : value.substring(0, value.lastIndexOf("_"));
 		}
@@ -363,12 +367,15 @@ package components
 		private function creationCompleteHandler(event:starling.events.Event):void
 		{
 			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
-			if(keyCode && !hasEventListener_keyCode && !owner)
+			if(!owner)
 			{
-				hasEventListener_keyCode = true;
-				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+				if(keyCode && !hasEventListener_keyCode)
+				{
+					hasEventListener_keyCode = true;
+					stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+				}
+				stage.addEventListener(TouchEvent.TOUCH, onTouch);
 			}
-			if(!owner) stage.addEventListener(TouchEvent.TOUCH, onTouch);
 		}
 		
 		/**
@@ -605,7 +612,7 @@ package components
 		private function removeTemp(isMove:Boolean = false):void
 		{
 			if(tempScreen != this.activeScreen) this.removeChild(tempScreen);
-			tempScreen.removeEventListener(Event.RESIZE, tempScreen_resizeHandler);
+			tempScreen.removeEventListener(starling.events.Event.RESIZE, tempScreen_resizeHandler);
 			tempScreen = null;
 			if(hasMoveEnterFrame)
 			{

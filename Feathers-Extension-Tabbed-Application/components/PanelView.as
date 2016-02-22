@@ -7,6 +7,8 @@ accordance with the terms of the accompanying license agreement.
 package components
 {
 	import feathers.controls.PanelScreen;
+	import feathers.events.FeathersEventType;
+	import starling.events.Event;
 	
 	/**
 	 * A view for use with <code>ViewNavigator</code>, based on <code>PanelScreen</code>
@@ -68,6 +70,21 @@ package components
 		public function PanelView()
 		{
 			super();
+			this.addEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
+		}
+		
+		private function creationCompleteHandler():void
+        {
+			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
+			if(owner.owner)
+			{
+				if(owner.owner.swipeView || owner.owner.swipeNavigator) this.horizontalScrollPolicy = "off";
+				this.width = owner.owner.stage.stageWidth - owner.owner.left - owner.owner.right;
+			}
+			else if(owner.swipeView)
+			{
+				this.horizontalScrollPolicy = "off";
+			}
 		}
 	}
 }

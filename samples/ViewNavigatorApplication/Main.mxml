@@ -5,7 +5,7 @@
 	theme="feathers.themes.MetalWorksDesktopTheme"
 	xmlns:components="components.*"
 	swipeView="true"
-	persistNavigatorState="true"><!-- keyCode="left" -->
+	persistNavigatorState="true"><!-- swipeNavigator="true" keyCode="left" -->
  
 	<fx:Script>
 		<![CDATA[

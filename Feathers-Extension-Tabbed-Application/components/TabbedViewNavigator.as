@@ -14,7 +14,7 @@ package components
 	import feathers.controls.LayoutGroup;
 	import feathers.controls.TabBar;
 	import feathers.layout.AnchorLayoutData;
-	import feathers.controls.ScreenNavigator;
+	//import feathers.controls.ScreenNavigator;
 	import flash.net.SharedObject;
 	import feathers.layout.AnchorLayout;
 	import flash.desktop.NativeApplication;
@@ -26,7 +26,14 @@ package components
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.events.Touch
-	
+	import flash.geom.Point;
+	import feathers.controls.IScreen;
+	import feathers.controls.supportClasses.IScreenNavigatorItem;
+	import feathers.core.FocusManager;
+	import starling.display.DisplayObject;
+	import flash.utils.getQualifiedClassName;
+	import flash.utils.getDefinitionByName;
+
 	/**
 	 * A container takes a <code>tab Bar</code> and <code>ViewNavigator</code>s , based on <code>LayoutGroup</code>.
 	 *
@@ -332,8 +339,15 @@ package components
 			tabBar.dataProvider.addItem( { label: label, vnID: vnID } );
 			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, vnID, _history, _historyData, position);
 			screenNavigator.addScreen(vnID, new ScreenNavigatorItem(navigator));
-			_validate();
-			(tabBar.dataProvider.length == 1) ? hideTabBar() : showTabBar();
+			if(!tabBarAutoHide) return;
+			if(tabBar.dataProvider.length == 1)
+			{
+				hideTabBar();
+			}
+			else if(tabBar.dataProvider.length == 2)
+			{
+				showTabBar();
+			}
 		}
 		
 		private function newID():String
@@ -346,7 +360,12 @@ package components
 		
 		private function tabBar_changeHandler( event:starling.events.Event ):void
 		{
-			if(screenNavigator.activeScreenID != tabBar.selectedItem.vnID) screenNavigator.showScreen(tabBar.selectedItem.vnID);
+			if(screenNavigator.activeScreenID != tabBar.selectedItem.vnID)
+			{
+				screenNavigator.showScreen(tabBar.selectedItem.vnID);
+				screenNavigator.activeScreen.x = 0;
+				(screenNavigator.activeScreen as Object).activeScreen.width = stage.stageWidth - left - right;
+			}
 		}
 		
 		private function onDeactivate(event:flash.events.Event):void
@@ -404,7 +423,7 @@ package components
 		private function onInit(event:EnterFrameEvent):void
 		{
 			init = false;
-			stage.addEventListener(EnterFrameEvent.ENTER_FRAME, onInit);
+			stage.removeEventListener(EnterFrameEvent.ENTER_FRAME, onInit);
 		}
 		
 		/**
@@ -412,9 +431,7 @@ package components
 		 */
 		public function hideTabBar():void
 		{			
-			if(scroller.height == 0 || !tabBarAutoHide) return;
 			tabBar.height = scroller.height = 0;
-			_validate();
 		}
 		
 		/**
@@ -422,9 +439,7 @@ package components
 		 */
 		public function showTabBar():void
 		{			
-			if(isNaN(scroller.height) || !tabBarAutoHide) return;
 			tabBar.height = scroller.height = NaN;
-			_validate();
 		}
 		
 		/**
@@ -456,8 +471,7 @@ package components
 				isScrollToIndex = false;
 				this.selectedIndex = dpIndexOf(tabBar.dataProvider, selectedItemID);
 				isScrollToIndex = true;
-				_validate();
-				if(tabBar.dataProvider.length == 1) hideTabBar();
+				if(tabBar.dataProvider.length == 1 && tabBarAutoHide) hideTabBar();
 			}
 			else
 			{
@@ -475,7 +489,6 @@ package components
 		public function renameElementAt(index:int, label:String):void
 		{			
 			tabBar.dataProvider.setItemAt( { label: label, vnID: tabBar.dataProvider.getItemAt(index).vnID }, index);
-			_validate();
 		}
 		
 		/**
@@ -521,7 +534,6 @@ package components
 			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, tabBar.dataProvider.getItemAt(index).vnID);
 			screenNavigator.addScreen(tabBar.dataProvider.getItemAt(index).vnID, new ScreenNavigatorItem(navigator));
 			if(index == this.selectedIndex) screenNavigator.showScreen(tabBar.dataProvider.getItemAt(index).vnID);
-			_validate();
 		}
 		
 		private function dpIndexOf(dataProvider:ListCollection, search:String):int
@@ -625,6 +637,14 @@ package components
 		{
 			var scrollerWidth:Number = Math.min(scroller.viewPort.width, stage.stageWidth - left - right);
 			if(scroller.width != scrollerWidth) scroller.width = scrollerWidth;
+			
+			if(screenNavigator.activeScreen)
+			{
+				if((screenNavigator.activeScreen as Object).activeScreen)
+				{
+					(screenNavigator.activeScreen as Object).activeScreen.width = stage.stageWidth - left - right;
+				}
+			}
 		}
 		
 		private var _selectedIndex:int = -1;
@@ -673,7 +693,12 @@ package components
 			}
 		}
 		
-		private function _validate():void
+		/**
+		 * Immediately validates the display object, if it is invalid.
+		 *
+		 *  The validation system exists to postpone updating a display object after properties are changed until until the last possible moment the display object is rendered. This allows multiple properties to be changed at a time without requiring a full update every time.
+		 */
+		public function validateNow():void
 		{
 			tabBar.validate();
 			scroller.validate();
@@ -730,7 +755,7 @@ package components
 		
 		private var _swipeView:Boolean;
 		/**
-		 * swipe to change View
+		 * Swipe to change View
 		 *
 		 * @default false
 		 */
@@ -788,9 +813,221 @@ package components
 			_latencyToStartSwipe = value;
 		}
 		
+		private var _swipeNavigator:Boolean;
+		/**
+		 * Swipe to change Navigator
+		 *
+		 * @default false
+		 */
+		public function get swipeNavigator():Boolean
+		{
+			return _swipeNavigator;
+		}
+		public function set swipeNavigator(value:Boolean):void
+		{
+			_swipeNavigator = value;
+		}
+		
 		private function onTouch(event:TouchEvent):void
 		{
-			activeNavigator.onTouch( event );
+			if(!swipeNavigator)
+			{
+				activeNavigator.onTouch( event );
+			}
+			else
+			{
+				var touchBegan:Touch = event.getTouch(stage, TouchPhase.BEGAN);
+				if (touchBegan)
+				{
+					beginMove( touchBegan.getLocation(stage) );
+				}
+				var touchMoved:Touch = event.getTouch(stage, TouchPhase.MOVED);
+				if (touchMoved)
+				{
+					if(isMoving) onMove( touchMoved.getLocation(stage) );
+				}
+				var touchEnded:Touch = event.getTouch(stage, TouchPhase.ENDED);
+				if (touchEnded)
+				{
+					onMouseUp( touchEnded.getLocation(stage) );
+				}
+			}
+		}
+		
+		/**
+		 * @private
+		 */
+		public var tempScreen:DisplayObject;
+		private function showViewInternal(id:String, transition:Function = null):void
+		{
+			if(!screenNavigator.hasScreen(id))
+			{
+				throw new ArgumentError("Screen with id '" + id + "' cannot be shown because it has not been defined.");
+			}
+
+			var item:IScreenNavigatorItem = IScreenNavigatorItem(screenNavigator._screens[id]);
+			tempScreen = item.getScreen();
+			tempScreen_resizeHandler();
+			stage.addEventListener(starling.events.Event.RESIZE, tempScreen_resizeHandler);
+			screenNavigator.addChild(tempScreen);
+		}
+		private function tempScreen_resizeHandler(event:starling.events.Event = null):void
+		{
+			var navigatorWidth:Number = stage.stageWidth - left - right;
+			(tempScreen as ViewNavigator).activeScreen.width = navigatorWidth;
+			tempScreen.x = movingBack ? screenNavigator.activeScreen.x - navigatorWidth : screenNavigator.activeScreen.x + navigatorWidth;
+		}
+		
+		private var startMoveX:Number;
+		private var previousMoveX:Number;
+		private var isMoving:Boolean;
+		private var movingBack:Boolean;
+		private var hasMoveEnterFrame:Boolean;
+		private function beginMove( mouse:Point ):void
+		{
+			if(hasMoveEnterFrame)
+			{
+				hasMoveEnterFrame = false;
+				screenNavigator.removeEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
+			}
+			if(!swipeView && !swipeNavigator) return;
+			var left:Number = 0, right:Number, top:Number = 0, bottom:Number;
+			left = left;
+			right = stage.stageWidth - right;
+			top = (tabBarAlign == "top") ? top + tabBarHeight : top;
+			bottom = isNaN(bottom) ? 0 : bottom;
+			bottom = (tabBarAlign == "bottom") ? stage.stageHeight - (bottom + tabBarHeight) : stage.stageHeight - bottom;
+			if(mouse.x < left || mouse.y < top || mouse.x > right || mouse.y > bottom) return;
+			for each(var _class:String in (this.activeNavigator.activeScreen as Object)._excludeClassesForSlide) //exclude classes
+			{
+				if(getQualifiedClassName(FocusManager.focus) == _class && _class != "") return;
+			}
+			for each(var object:String in (this.activeNavigator.activeScreen as Object)._excludeComponentsForSlide) //exclude components
+			{
+				if((this.activeNavigator.activeScreen as Object).hasOwnProperty(object))
+				{
+					if(FocusManager.focus == (this.activeNavigator.activeScreen as Object)[object]) return;
+				}
+				else
+				{
+					throw new Error("The components \""+object+"\" doesn't exist in \""+getQualifiedClassName( getDefinitionByName( activeNavigator.getHistoryClassName( this.activeNavigator.activeScreenID ) ) )+"\" class.");
+				}
+			}
+			isMoving = true;
+			previousMoveX = startMoveX = mouse.x;
+		}
+		private function onMove( mouse:Point ):void
+		{
+			if(mouse.x < 0 || mouse.y < 0 || mouse.x > stage.stageWidth || mouse.y > stage.stageHeight)
+			{
+				onMouseUp();
+				return;
+			}
+			if(!tempScreen)
+			{
+				if(mouse.x < startMoveX - latencyToStartSwipe) //next
+				{
+					if(this.selectedIndex == this.length-1) return;
+					previousMoveX = mouse.x;
+					showViewInternal(tabBar.dataProvider.getItemAt(this.selectedIndex+1).vnID);
+					tempScreen.x = stage.stageWidth;
+					movingBack = false;
+				}
+				else if(mouse.x > startMoveX + latencyToStartSwipe) //previous
+				{
+					if(this.selectedIndex == 0) return;
+					previousMoveX = mouse.x;
+					showViewInternal(tabBar.dataProvider.getItemAt(this.selectedIndex-1).vnID);
+					tempScreen.x = -stage.stageWidth;
+					movingBack = true;
+				}
+			}
+			else
+			{
+				screenNavigator.activeScreen.x += (mouse.x - previousMoveX ) * speedSwipe;
+				tempScreen.x += (mouse.x - previousMoveX ) * speedSwipe;
+				if(mouse.x < previousMoveX)
+				{
+					if(!movingBack && tempScreen.x < 0) //next and left
+					{
+						tempScreen.x = 0;
+						screenNavigator.clearScreenInternal();
+						screenNavigator._activeScreen = tempScreen;
+						screenNavigator._activeScreenID = (tempScreen as ViewNavigator).vnID;
+						tabBar.selectedIndex += 1;
+						scrollToIndex();
+						removeTemp(true);
+					}
+					else if(movingBack && screenNavigator._activeScreen.x < 0) //previous and left
+					{
+						screenNavigator._activeScreen.x = 0;
+					}
+				}
+				else if(mouse.x > previousMoveX)
+				{
+					if(movingBack && tempScreen.x > 0)  //previous and right
+					{
+						tempScreen.x = 0;
+						screenNavigator.clearScreenInternal();
+						screenNavigator._activeScreen = tempScreen;
+						screenNavigator._activeScreenID = (tempScreen as ViewNavigator).vnID;
+						tabBar.selectedIndex -= 1;
+						scrollToIndex();
+						removeTemp(true);
+					}
+					else if(!movingBack && screenNavigator._activeScreen.x > 0) //next and right
+					{
+						screenNavigator._activeScreen.x = 0;
+					}
+				}
+				previousMoveX = mouse.x;
+			}
+		}
+		private function onMouseUp( mouse:Point = null ):void
+		{
+			isMoving = false;
+			
+			if(!tempScreen) return;
+			if(!hasMoveEnterFrame)
+			{
+				hasMoveEnterFrame = true;
+				screenNavigator.addEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
+			}
+		}
+		private function onBackReleaseSwipe(event:EnterFrameEvent):void
+		{
+			if(!movingBack)
+			{
+				tempScreen.x += speedBackReleaseSwipe;
+				screenNavigator.activeScreen.x += speedBackReleaseSwipe;
+				if(screenNavigator._activeScreen.x > 0) //next and right
+				{
+					screenNavigator._activeScreen.x = 0;
+					removeTemp();
+				}
+			}
+			else
+			{
+				tempScreen.x -= speedBackReleaseSwipe;
+				screenNavigator.activeScreen.x -= speedBackReleaseSwipe;
+				if(screenNavigator._activeScreen.x < 0) //previous and left
+				{
+					screenNavigator._activeScreen.x = 0;
+					removeTemp();
+				}
+			}
+		}
+		private function removeTemp(isMove:Boolean = false):void
+		{
+			if(tempScreen != screenNavigator.activeScreen) screenNavigator.removeChild(tempScreen);
+			stage.removeEventListener(starling.events.Event.RESIZE, tempScreen_resizeHandler);
+			tempScreen = null;
+			if(hasMoveEnterFrame)
+			{
+				hasMoveEnterFrame = false;
+				screenNavigator.removeEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
+			}
+			if(isMove) onMouseUp();
 		}
 	}
 }
