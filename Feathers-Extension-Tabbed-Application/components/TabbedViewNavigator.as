@@ -60,7 +60,7 @@ package components
 		/**
 		 * The navigators that showing the views
 		 */
-		private var screenNavigator:ScreenNavigator;
+		private var screenNavigator:TabbedScreenNavigator;
 		private var layoutDataVN:AnchorLayoutData;
 		private var isScrollToIndex:Boolean = true;
 		private var _tabBarHeight:Number = 0;
@@ -84,7 +84,7 @@ package components
 			scroller.addChild( tabBar );
 			container.addChild( scroller );
 			
-			screenNavigator = new ScreenNavigator();
+			screenNavigator = new TabbedScreenNavigator();
 			layoutDataVN = new AnchorLayoutData();
 			screenNavigator.layoutData = layoutDataVN;
 			layoutDataVN.bottom = layoutDataVN.right = layoutDataVN.top = layoutDataVN.left = 0;
@@ -865,7 +865,7 @@ package components
 				throw new ArgumentError("Screen with id '" + id + "' cannot be shown because it has not been defined.");
 			}
 
-			var item:IScreenNavigatorItem = IScreenNavigatorItem(screenNavigator._screens[id]);
+			var item:IScreenNavigatorItem = IScreenNavigatorItem(screenNavigator._views[id]);
 			tempScreen = item.getScreen();
 			tempScreen_resizeHandler();
 			stage.addEventListener(starling.events.Event.RESIZE, tempScreen_resizeHandler);
@@ -951,16 +951,16 @@ package components
 					if(!movingBack && tempScreen.x < 0) //next and left
 					{
 						tempScreen.x = 0;
-						screenNavigator.clearScreenInternal();
-						screenNavigator._activeScreen = tempScreen;
-						screenNavigator._activeScreenID = (tempScreen as ViewNavigator).vnID;
+						screenNavigator.clearViewInternal();
+						screenNavigator.activeScreen = tempScreen;
+						screenNavigator.activeScreenID = (tempScreen as ViewNavigator).vnID;
 						tabBar.selectedIndex += 1;
 						scrollToIndex();
 						removeTemp(true);
 					}
-					else if(movingBack && screenNavigator._activeScreen.x < 0) //previous and left
+					else if(movingBack && screenNavigator.activeScreen.x < 0) //previous and left
 					{
-						screenNavigator._activeScreen.x = 0;
+						screenNavigator.activeScreen.x = 0;
 					}
 				}
 				else if(mouse.x > previousMoveX)
@@ -968,16 +968,16 @@ package components
 					if(movingBack && tempScreen.x > 0)  //previous and right
 					{
 						tempScreen.x = 0;
-						screenNavigator.clearScreenInternal();
-						screenNavigator._activeScreen = tempScreen;
-						screenNavigator._activeScreenID = (tempScreen as ViewNavigator).vnID;
+						screenNavigator.clearViewInternal();
+						screenNavigator.activeScreen = tempScreen;
+						screenNavigator.activeScreenID = (tempScreen as ViewNavigator).vnID;
 						tabBar.selectedIndex -= 1;
 						scrollToIndex();
 						removeTemp(true);
 					}
-					else if(!movingBack && screenNavigator._activeScreen.x > 0) //next and right
+					else if(!movingBack && screenNavigator.activeScreen.x > 0) //next and right
 					{
-						screenNavigator._activeScreen.x = 0;
+						screenNavigator.activeScreen.x = 0;
 					}
 				}
 				previousMoveX = mouse.x;
@@ -1000,9 +1000,9 @@ package components
 			{
 				tempScreen.x += speedBackReleaseSwipe;
 				screenNavigator.activeScreen.x += speedBackReleaseSwipe;
-				if(screenNavigator._activeScreen.x > 0) //next and right
+				if(screenNavigator.activeScreen.x > 0) //next and right
 				{
-					screenNavigator._activeScreen.x = 0;
+					screenNavigator.activeScreen.x = 0;
 					removeTemp();
 				}
 			}
@@ -1010,9 +1010,9 @@ package components
 			{
 				tempScreen.x -= speedBackReleaseSwipe;
 				screenNavigator.activeScreen.x -= speedBackReleaseSwipe;
-				if(screenNavigator._activeScreen.x < 0) //previous and left
+				if(screenNavigator.activeScreen.x < 0) //previous and left
 				{
-					screenNavigator._activeScreen.x = 0;
+					screenNavigator.activeScreen.x = 0;
 					removeTemp();
 				}
 			}

@@ -538,8 +538,9 @@ package components
 			}
 			else
 			{
-				this.activeScreen.x += (mouse.x - previousMoveX ) * speedSwipe;
-				tempScreen.x += (mouse.x - previousMoveX ) * speedSwipe;
+				var moveX:Number = (mouse.x - previousMoveX ) * speedSwipe;
+				this.activeScreen.x += moveX;
+				tempScreen.x += moveX;
 				if(mouse.x < previousMoveX)
 				{
 					if(!movingBack && tempScreen.x < 0) //next and left
