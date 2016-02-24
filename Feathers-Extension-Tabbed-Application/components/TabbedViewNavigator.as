@@ -306,6 +306,7 @@ package components
 					{
 						createElement(tabBarHistory[i].label, tabBarHistory[i].vnID, screen, data, transition, Vector.<String>(navigatorsHistory[i]._history), Vector.<Object>(navigatorsHistory[i]._historyData), navigatorsHistory[i].position);
 					}
+					scroller.validate();
 					this.selectedIndex = my_so.data.tabBarSelected;
 				}
 			}
@@ -681,14 +682,18 @@ package components
 				var tabs:Array = [];
 				for(var i:uint; i<tabBar.numChildren; i++) tabs.push(tabBar.getChildAt(i));
 				tabs.sortOn("x", Array.NUMERIC);
-				var pos:Number = tabs[this.selectedIndex].x + tabs[this.selectedIndex].width;
-				if(pos > scroller.width)
+				
+				if(tabs[this.selectedIndex].width > scroller.width) //tab width > scroller width
 				{
-					scroller.horizontalScrollPosition = pos - scroller.width;
+					scroller.horizontalScrollPosition = tabs[this.selectedIndex].x; //tab begin
 				}
-				else
+				else if(tabs[this.selectedIndex].x < scroller.horizontalScrollPosition) //tab begin < scroller begin
 				{
-					scroller.horizontalScrollPosition = 0;
+					scroller.horizontalScrollPosition = tabs[this.selectedIndex].x; //tab begin
+				}
+				else if(tabs[this.selectedIndex].x + tabs[this.selectedIndex].width > scroller.horizontalScrollPosition + scroller.width) //tab end > scroller end
+				{
+					scroller.horizontalScrollPosition = tabs[this.selectedIndex].x + tabs[this.selectedIndex].width - scroller.width; //tab end - scroller width
 				}
 			}
 		}
@@ -892,10 +897,10 @@ package components
 			}
 			if(!swipeView && !swipeNavigator) return;
 			var left:Number = 0, right:Number, top:Number = 0, bottom:Number;
-			left = left;
-			right = stage.stageWidth - right;
-			top = (tabBarAlign == "top") ? top + tabBarHeight : top;
-			bottom = isNaN(bottom) ? 0 : bottom;
+			left = this.left;
+			right = stage.stageWidth - this.right;
+			top = (tabBarAlign == "top") ? this.top + tabBarHeight : this.top;
+			bottom = isNaN(this.bottom) ? 0 : this.bottom;
 			bottom = (tabBarAlign == "bottom") ? stage.stageHeight - (bottom + tabBarHeight) : stage.stageHeight - bottom;
 			if(mouse.x < left || mouse.y < top || mouse.x > right || mouse.y > bottom) return;
 			for each(var _class:String in (this.activeNavigator.activeScreen as Object)._excludeClassesForSlide) //exclude classes
