@@ -187,7 +187,7 @@ package components
 		 */
 		public function get bottom():Number
 		{
-			return _bottom;
+			return isNaN(_bottom) ? 0 : _bottom;
 		}
 		public function set bottom(value:Number):void
 		{
@@ -650,6 +650,7 @@ package components
 				if((screenNavigator.activeScreen as Object).activeScreen)
 				{
 					(screenNavigator.activeScreen as Object).activeScreen.width = stage.stageWidth - left - right;
+					(screenNavigator.activeScreen as Object).activeScreen.height = stage.stageHeight - top - bottom - tabBarHeight;
 				}
 			}
 		}
@@ -1051,7 +1052,7 @@ package components
 			left = this.left;
 			right = stage.stageWidth - this.right;
 			top = (tabBarAlign == "top") ? this.top + tabBarHeight : this.top;
-			bottom = isNaN(this.bottom) ? 0 : this.bottom;
+			bottom = this.bottom;
 			bottom = (tabBarAlign == "bottom") ? stage.stageHeight - (bottom + tabBarHeight) : stage.stageHeight - bottom;
 			if(mouse.x < left || mouse.y < top || mouse.x > right || mouse.y > bottom) return;
 			for each(var _class:String in (this.activeNavigator.activeScreen as Object)._excludeClassesForSlide) //exclude classes

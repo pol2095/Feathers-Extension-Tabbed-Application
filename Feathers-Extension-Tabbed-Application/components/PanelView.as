@@ -80,6 +80,7 @@ package components
 			{
 				if(owner.owner.swipeView || owner.owner.swipeNavigator) this.horizontalScrollPolicy = "off";
 				this.width = owner.owner.stage.stageWidth - owner.owner.left - owner.owner.right;
+				this.height = owner.owner.stage.stageHeight - owner.owner.top - owner.owner.bottom - owner.owner.tabBarHeight;
 			}
 			else if(owner.swipeView)
 			{
