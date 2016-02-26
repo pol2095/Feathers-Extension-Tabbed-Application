@@ -371,6 +371,7 @@ package components
 				screenNavigator.showScreen(tabBar.selectedItem.vnID);
 				screenNavigator.activeScreen.x = 0;
 				(screenNavigator.activeScreen as Object).activeScreen.width = stage.stageWidth - left - right;
+				resizeHandler();
 			}
 		}
 		
@@ -1031,6 +1032,7 @@ package components
 		{
 			var navigatorWidth:Number = stage.stageWidth - left - right;
 			(tempScreen as ViewNavigator).activeScreen.width = navigatorWidth;
+			(tempScreen as ViewNavigator).activeScreen.height = stage.stageHeight - top - bottom - tabBarHeight;
 			tempScreen.x = movingBack ? screenNavigator.activeScreen.x - navigatorWidth : screenNavigator.activeScreen.x + navigatorWidth;
 		}
 		
