@@ -33,6 +33,7 @@ package components
 	import starling.display.DisplayObject;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getDefinitionByName;
+	import starling.core.Starling;
 
 	/**
 	 * A container takes a <code>tab Bar</code> and <code>ViewNavigator</code>s , based on <code>LayoutGroup</code>.
@@ -306,7 +307,7 @@ package components
 					{
 						createElement(tabBarHistory[i].label, tabBarHistory[i].vnID, screen, data, transition, Vector.<String>(navigatorsHistory[i]._history), Vector.<Object>(navigatorsHistory[i]._historyData), navigatorsHistory[i].position);
 					}
-					scroller.validate();
+					validateNow();
 					this.selectedIndex = my_so.data.tabBarSelected;
 				}
 			}
@@ -338,6 +339,10 @@ package components
 		private function createElement(label:String, vnID:String, screen:Object, data:Object, transition:Function, _history:Vector.<String> = null, _historyData:Vector.<Object> = null, position:uint = 0):void
 		{
 			tabBar.dataProvider.addItem( { label: label, vnID: vnID } );
+			validateNow();
+			var tab:ToggleButton = tabBar.getChildAt(tabBar.dataProvider.length-1) as ToggleButton;
+			tab.isLongPressEnabled = dragTab;
+			tab.addEventListener( FeathersEventType.LONG_PRESS, longPresshandler);
 			var navigator:ViewNavigator = new ViewNavigator(screen, data, transition, this, vnID, _history, _historyData, position);
 			screenNavigator.addScreen(vnID, new ScreenNavigatorItem(navigator));
 			if(!tabBarAutoHide) return;
@@ -432,7 +437,7 @@ package components
 		 */
 		public function hideTabBar():void
 		{			
-			tabBar.height = scroller.height = 0;
+			if(scroller.visible) scroller.includeInLayout = scroller.visible = false;
 		}
 		
 		/**
@@ -440,7 +445,7 @@ package components
 		 */
 		public function showTabBar():void
 		{			
-			tabBar.height = scroller.height = NaN;
+			if(!scroller.visible) scroller.includeInLayout = scroller.visible = true;
 		}
 		
 		/**
@@ -592,7 +597,7 @@ package components
 		 */
 		public function get tabBarHeight():Number
 		{
-			return scroller.height;
+			return scroller.visible ? scroller.height : 0;
 		}
 		
 		/**
@@ -608,6 +613,7 @@ package components
 		private function creationCompleteHandler(event:starling.events.Event):void
 		{
 			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
+			tabBar.distributeTabSizes = distributeTabSizes;
 			
 			if(tabBarAlign == "top")
 			{
@@ -667,14 +673,14 @@ package components
 			if(screenNavigator.activeScreenID != tabBar.dataProvider.getItemAt(value).vnID)
 			{
 				tabBar.selectedIndex = value;
-				scrollToIndex();
+				scrollToIndex(this.selectedIndex);
 			}
 		}
 		
 		/**
 		 * Scroll to the index currently selected in the tabBar.
 		 */
-		private function scrollToIndex():void
+		private function scrollToIndex(index:int):void
 		{
 			if(!isScrollToIndex) return;
 			if(scroller.viewPort.width > scroller.width)
@@ -683,17 +689,17 @@ package components
 				for(var i:uint; i<tabBar.numChildren; i++) tabs.push(tabBar.getChildAt(i));
 				tabs.sortOn("x", Array.NUMERIC);
 				
-				if(tabs[this.selectedIndex].width > scroller.width) //tab width > scroller width
+				if(tabs[index].width > scroller.width) //tab width > scroller width
 				{
-					scroller.horizontalScrollPosition = tabs[this.selectedIndex].x; //tab begin
+					scroller.horizontalScrollPosition = tabs[index].x; //tab begin
 				}
-				else if(tabs[this.selectedIndex].x < scroller.horizontalScrollPosition) //tab begin < scroller begin
+				else if(tabs[index].x < scroller.horizontalScrollPosition) //tab begin < scroller begin
 				{
-					scroller.horizontalScrollPosition = tabs[this.selectedIndex].x; //tab begin
+					scroller.horizontalScrollPosition = tabs[index].x; //tab begin
 				}
-				else if(tabs[this.selectedIndex].x + tabs[this.selectedIndex].width > scroller.horizontalScrollPosition + scroller.width) //tab end > scroller end
+				else if(tabs[index].x + tabs[index].width > scroller.horizontalScrollPosition + scroller.width) //tab end > scroller end
 				{
-					scroller.horizontalScrollPosition = tabs[this.selectedIndex].x + tabs[this.selectedIndex].width - scroller.width; //tab end - scroller width
+					scroller.horizontalScrollPosition = tabs[index].x + tabs[index].width - scroller.width; //tab end - scroller width
 				}
 			}
 		}
@@ -844,19 +850,163 @@ package components
 				var touchBegan:Touch = event.getTouch(stage, TouchPhase.BEGAN);
 				if (touchBegan)
 				{
-					beginMove( touchBegan.getLocation(stage) );
+					beginMove( touchBegan.getLocation(stage) );			
 				}
 				var touchMoved:Touch = event.getTouch(stage, TouchPhase.MOVED);
 				if (touchMoved)
 				{
 					if(isMoving) onMove( touchMoved.getLocation(stage) );
+					if(isTabMoving) onTabMove( touchMoved.getLocation(stage) );
 				}
 				var touchEnded:Touch = event.getTouch(stage, TouchPhase.ENDED);
 				if (touchEnded)
 				{
 					onMouseUp( touchEnded.getLocation(stage) );
+					if(isTabMoving) onTabMouseUp( touchEnded.getLocation(stage) );
 				}
 			}
+		}
+		
+		private var isTabMoving:Boolean;
+		private var tabIndexMoving:uint;
+		private var tabMoving:ToggleButton;
+		private var mouse:Point;
+		private var tabMouseX:Number; //mouseX on tab
+		private function longPresshandler( event:starling.events.Event ):void
+		{
+			if(this.length == 1 || !dragTab) return;
+			tabMoving = (event.target as Object) as ToggleButton;
+			tabMouseX = mouse.x - (left + tabMoving.x - scroller.horizontalScrollPosition);
+			var tabs:Array = [];
+			for(var i:uint; i<tabBar.numChildren; i++) tabs.push(tabBar.getChildAt(i));
+			tabs.sortOn("x", Array.NUMERIC);
+			for(i=0; i<tabs.length; i++)
+			{
+				if(tabs[i] == tabMoving)
+				{
+					tabIndexMoving = i;
+					break;
+				}
+			}
+			tabMoving.includeInLayout = false;
+			tabBar.invalidate("content");
+			validateNow();
+			
+			if(scroller.viewPort.width == scroller.width) //scroller width and the right border position of the tabBar
+			{
+				scrollerWidth = 0;
+				for(i=0; i<tabBar.numChildren; i++)
+				{
+					if(tabBar.getChildAt(i) != tabMoving) scrollerWidth += tabBar.getChildAt(i).width;
+				}
+				rightTabBar = left + scrollerWidth;
+			}
+			else
+			{
+				scrollerWidth = stage.stageWidth - left - right;
+				rightTabBar = stage.stageWidth - right;
+			}
+			
+			onTabMove( mouse );
+			tabMoving.parent.setChildIndex(tabMoving, tabMoving.parent.numChildren - 1)
+			isTabMoving = true;
+			scroller.horizontalScrollPolicy = "off";
+			tabMoving.alpha = 0.5;
+			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, EnterFrameDragHandler);
+		}
+		
+		private function EnterFrameDragHandler():void {
+			if(scroller.viewPort.width > scroller.width)
+			{
+				if(mouse.x > left && mouse.x <= left + 10)
+				{
+					(scroller.horizontalScrollPosition > 0) ? scroller.horizontalScrollPosition -= 5 : scroller.horizontalScrollPosition = 0;
+					onTabMove( mouse );
+				}
+				else if(mouse.x > left +10 && mouse.x <= left + 20)
+				{
+					(scroller.horizontalScrollPosition > 0) ? scroller.horizontalScrollPosition -= 2 : scroller.horizontalScrollPosition = 0;
+					onTabMove( mouse );
+				}
+				else if(mouse.x >= stage.stageWidth - right - 20 && mouse.x < stage.stageWidth - right - 10)
+				{
+					(scroller.horizontalScrollPosition < scroller.maxHorizontalScrollPosition) ? scroller.horizontalScrollPosition += 2 : scroller.horizontalScrollPosition = scroller.maxHorizontalScrollPosition;
+					onTabMove( mouse );
+				}
+				else if(mouse.x >= stage.stageWidth - right - 10 && mouse.x < stage.stageWidth - right)
+				{
+					(scroller.horizontalScrollPosition < scroller.maxHorizontalScrollPosition) ? scroller.horizontalScrollPosition += 5 : scroller.horizontalScrollPosition = scroller.maxHorizontalScrollPosition;
+					onTabMove( mouse );
+				}
+			}
+		}
+		
+		private var scrollerWidth:Number; //scroller width 
+		private var rightTabBar:Number; //the right border position of the tabBar
+		private function onTabMove( mouse:Point ):void
+		{
+			this.mouse = mouse;
+			
+			var endRightTabMoving:Number = (tabMoving.width > scrollerWidth) ? 0 : tabMoving.width;
+			
+			if(mouse.x - tabMouseX >= left && mouse.x - tabMouseX <= rightTabBar - endRightTabMoving)
+			{
+				tabMoving.x = scroller.horizontalScrollPosition + mouse.x - left - tabMouseX;
+				tabMouseX = mouse.x - (left + tabMoving.x - scroller.horizontalScrollPosition);
+			}
+			else if(mouse.x - tabMouseX < left)
+			{
+				tabMoving.x = scroller.horizontalScrollPosition;
+			}
+			else if(mouse.x - tabMouseX > rightTabBar - endRightTabMoving)
+			{
+				tabMoving.x = scroller.horizontalScrollPosition - endRightTabMoving + rightTabBar - left;
+			}
+		}
+		
+		private function onTabMouseUp( mouse:Point = null ):void
+		{
+			var mouseX:Number = 0; //mouse.x position
+			if(mouse.x >= left && mouse.x <= rightTabBar) mouseX = mouse.x - left;
+			if(mouse.x > rightTabBar) mouseX = scrollerWidth;
+			
+			var tabMouseUpX:Number = scroller.horizontalScrollPosition + mouseX;
+			var tabs:Array = [];
+			for(var i:uint; i<tabBar.numChildren; i++)
+			{
+				if(tabBar.getChildAt(i) != tabMoving) tabs.push(tabBar.getChildAt(i));
+			}
+			tabs.sortOn("x", Array.NUMERIC);
+			tabs.splice(tabIndexMoving, 0, tabMoving);
+			var newIndex:uint;
+			for(i=0; i<tabs.length; i++)
+			{
+				if(tabs[i] != tabMoving)
+				{
+					if(tabMouseUpX >= tabs[i].x && tabMouseUpX <= tabs[i].x + tabs[i].width)
+					{
+						if(tabMouseUpX >= tabs[i].x && tabMouseUpX <= tabs[i].x + tabs[i].width / 2)
+						{
+							newIndex = i;
+						}
+						else if(tabMouseUpX > tabs[i].x + tabs[i].width / 2 && tabMouseUpX <= tabs[i].x + tabs[i].width)
+						{
+							newIndex = i + 1;
+						}
+						break;
+					}
+				}
+			}
+			tabMoving.includeInLayout = true;
+			tabBar.invalidate("content");
+			if(tabIndexMoving < newIndex) newIndex--;
+			moveElement(tabIndexMoving, newIndex);
+			validateNow();
+			scrollToIndex(newIndex);
+			tabMoving.alpha = 1;
+			isTabMoving = false;
+			scroller.horizontalScrollPolicy = "auto";
+			Starling.current.stage.removeEventListener(EnterFrameEvent.ENTER_FRAME, EnterFrameDragHandler);
 		}
 		
 		/**
@@ -890,6 +1040,7 @@ package components
 		private var hasMoveEnterFrame:Boolean;
 		private function beginMove( mouse:Point ):void
 		{
+			this.mouse = mouse;
 			if(hasMoveEnterFrame)
 			{
 				hasMoveEnterFrame = false;
@@ -960,7 +1111,7 @@ package components
 						screenNavigator.activeScreen = tempScreen;
 						screenNavigator.activeScreenID = (tempScreen as ViewNavigator).vnID;
 						tabBar.selectedIndex += 1;
-						scrollToIndex();
+						scrollToIndex(this.selectedIndex);
 						removeTemp(true);
 					}
 					else if(movingBack && screenNavigator.activeScreen.x < 0) //previous and left
@@ -977,7 +1128,7 @@ package components
 						screenNavigator.activeScreen = tempScreen;
 						screenNavigator.activeScreenID = (tempScreen as ViewNavigator).vnID;
 						tabBar.selectedIndex -= 1;
-						scrollToIndex();
+						scrollToIndex(this.selectedIndex);
 						removeTemp(true);
 					}
 					else if(!movingBack && screenNavigator.activeScreen.x > 0) //next and right
@@ -1033,6 +1184,39 @@ package components
 				screenNavigator.removeEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
 			}
 			if(isMove) onMouseUp();
+		}
+		
+		private var _dragTab:Boolean;
+		/**
+		 * The elements of the tab bar can be moved
+		 *
+		 * @default false
+		 */
+		public function get dragTab():Boolean
+		{
+			return _dragTab;
+		}
+		public function set dragTab(value:Boolean):void
+		{
+			_dragTab = value;
+			if(!isCreated) return;
+			for(var i:uint; i<tabBar.numChildren; i++) (tabBar.getChildAt(i) as ToggleButton).isLongPressEnabled = value;
+		}
+		
+		private var _distributeTabSizes:Boolean;
+		/**
+		 * If true, the tabs will be equally sized in the direction of the layout. In other words, if the tab bar is horizontal, each tab will have the same width, and if the tab bar is vertical, each tab will have the same height. If false, the tabs will be sized to their ideal dimensions.
+		 *
+		 * @default false
+		 */
+		public function get distributeTabSizes():Boolean
+		{
+			return _distributeTabSizes;
+		}
+		public function set distributeTabSizes(value:Boolean):void
+		{
+			_distributeTabSizes = value;
+			if(isCreated) tabBar.distributeTabSizes = value;
 		}
 	}
 }
