@@ -5,7 +5,7 @@
 	creationComplete="creationCompleteHandler()"
 	xmlns:components="components.*"
 	swipeView="true"
-	persistNavigatorState="true"><!-- swipeNavigator="true" keyCode="left" tabBarAutoHide="false" tabBarAlign="bottom" bottom="100" top="100" left="50" right="50" -->	
+	persistNavigatorState="true"><!-- dragTab="true" swipeNavigator="true" keyCode="left" tabBarAutoHide="false" tabBarAlign="bottom" bottom="100" top="100" left="50" right="50" -->	
 	<fx:Script>
 		<![CDATA[
 			private function creationCompleteHandler():void
