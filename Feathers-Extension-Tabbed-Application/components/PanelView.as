@@ -74,7 +74,7 @@ package components
 		}
 		
 		private function creationCompleteHandler():void
-        {
+		{
 			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
 			if(owner.owner)
 			{
