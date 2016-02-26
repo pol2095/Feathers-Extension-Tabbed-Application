@@ -920,24 +920,24 @@ package components
 		private function EnterFrameDragHandler():void {
 			if(scroller.viewPort.width > scroller.width)
 			{
-				if(mouse.x > left && mouse.x <= left + dragTabStart / 2)
+				if(mouse.x > left && mouse.x <= left + dragTabScrollEdgeStart / 2)
 				{
-					(scroller.horizontalScrollPosition > 0) ? scroller.horizontalScrollPosition -= dragTabSpeed : scroller.horizontalScrollPosition = 0;
+					(scroller.horizontalScrollPosition > 0) ? scroller.horizontalScrollPosition -= dragTabScrollEdgeSpeed : scroller.horizontalScrollPosition = 0;
 					onTabMove( mouse );
 				}
-				else if(mouse.x > left + dragTabStart / 2 && mouse.x <= left + dragTabStart)
+				else if(mouse.x > left + dragTabScrollEdgeStart / 2 && mouse.x <= left + dragTabScrollEdgeStart)
 				{
-					(scroller.horizontalScrollPosition > 0) ? scroller.horizontalScrollPosition -= dragTabSpeed / 2 : scroller.horizontalScrollPosition = 0;
+					(scroller.horizontalScrollPosition > 0) ? scroller.horizontalScrollPosition -= dragTabScrollEdgeSpeed / 2 : scroller.horizontalScrollPosition = 0;
 					onTabMove( mouse );
 				}
-				else if(mouse.x >= stage.stageWidth - right - dragTabStart && mouse.x < stage.stageWidth - right - dragTabStart / 2)
+				else if(mouse.x >= stage.stageWidth - right - dragTabScrollEdgeStart && mouse.x < stage.stageWidth - right - dragTabScrollEdgeStart / 2)
 				{
-					(scroller.horizontalScrollPosition < scroller.maxHorizontalScrollPosition) ? scroller.horizontalScrollPosition += dragTabSpeed / 2 : scroller.horizontalScrollPosition = scroller.maxHorizontalScrollPosition;
+					(scroller.horizontalScrollPosition < scroller.maxHorizontalScrollPosition) ? scroller.horizontalScrollPosition += dragTabScrollEdgeSpeed / 2 : scroller.horizontalScrollPosition = scroller.maxHorizontalScrollPosition;
 					onTabMove( mouse );
 				}
-				else if(mouse.x >= stage.stageWidth - right - dragTabStart / 2 && mouse.x < stage.stageWidth - right)
+				else if(mouse.x >= stage.stageWidth - right - dragTabScrollEdgeStart / 2 && mouse.x < stage.stageWidth - right)
 				{
-					(scroller.horizontalScrollPosition < scroller.maxHorizontalScrollPosition) ? scroller.horizontalScrollPosition += dragTabSpeed : scroller.horizontalScrollPosition = scroller.maxHorizontalScrollPosition;
+					(scroller.horizontalScrollPosition < scroller.maxHorizontalScrollPosition) ? scroller.horizontalScrollPosition += dragTabScrollEdgeSpeed : scroller.horizontalScrollPosition = scroller.maxHorizontalScrollPosition;
 					onTabMove( mouse );
 				}
 			}
@@ -1222,34 +1222,34 @@ package components
 			if(isCreated) tabBar.distributeTabSizes = value;
 		}
 		
-		private var _dragTabStart:uint = 20;
+		private var _dragTabScrollEdgeStart:uint = 20;
 		/**
 		 * The distance from the edge of the tab bar where the tab bar sroll automatically.
 		 *
 		 * @default 20
 		 */
-		public function get dragTabStart():uint
+		public function get dragTabScrollEdgeStart():uint
 		{
-			return _dragTabStart;
+			return _dragTabScrollEdgeStart;
 		}
-		public function set dragTabStart(value:uint):void
+		public function set dragTabScrollEdgeStart(value:uint):void
 		{
-			_dragTabStart = value;
+			_dragTabScrollEdgeStart = value;
 		}
 		
-		private var _dragTabSpeed:uint = 5;
+		private var _dragTabScrollEdgeSpeed:uint = 5;
 		/**
 		 * Scroll speed when the mouse is near the edge of the tab bar which allows scroll automatically the tab bar.
 		 *
 		 * @default 5
 		 */
-		public function get dragTabSpeed():uint
+		public function get dragTabScrollEdgeSpeed():uint
 		{
-			return _dragTabSpeed;
+			return _dragTabScrollEdgeSpeed;
 		}
-		public function set dragTabSpeed(value:uint):void
+		public function set dragTabScrollEdgeSpeed(value:uint):void
 		{
-			_dragTabSpeed = value;
+			_dragTabScrollEdgeSpeed = value;
 		}
 	}
 }
