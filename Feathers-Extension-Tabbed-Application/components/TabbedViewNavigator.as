@@ -913,7 +913,7 @@ package components
 			tabMoving.parent.setChildIndex(tabMoving, tabMoving.parent.numChildren - 1)
 			isTabMoving = true;
 			scroller.horizontalScrollPolicy = "off";
-			tabMoving.alpha = 0.5;
+			tabMoving.alpha = dragTabAlpha;
 			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, EnterFrameDragHandler);
 		}
 		
@@ -1222,34 +1222,49 @@ package components
 			if(isCreated) tabBar.distributeTabSizes = value;
 		}
 		
-		private var _dragTabScrollEdgeStart:uint = 20;
+		private var _dragTabScrollEdgeStart:Number = 20;
 		/**
-		 * The distance from the edge of the tab bar where the tab bar sroll automatically.
+		 * The distance in pixels from the edge of the tab bar where the tab bar sroll automatically.
 		 *
 		 * @default 20
 		 */
-		public function get dragTabScrollEdgeStart():uint
+		public function get dragTabScrollEdgeStart():Number
 		{
 			return _dragTabScrollEdgeStart;
 		}
-		public function set dragTabScrollEdgeStart(value:uint):void
+		public function set dragTabScrollEdgeStart(value:Number):void
 		{
 			_dragTabScrollEdgeStart = value;
 		}
 		
-		private var _dragTabScrollEdgeSpeed:uint = 5;
+		private var _dragTabScrollEdgeSpeed:Number = 5;
 		/**
-		 * Scroll speed when the mouse is near the edge of the tab bar which allows scroll automatically the tab bar.
+		 * Scroll speed in pixels when the mouse is near the edge of the tab bar which allows scroll automatically the tab bar.
 		 *
 		 * @default 5
 		 */
-		public function get dragTabScrollEdgeSpeed():uint
+		public function get dragTabScrollEdgeSpeed():Number
 		{
 			return _dragTabScrollEdgeSpeed;
 		}
-		public function set dragTabScrollEdgeSpeed(value:uint):void
+		public function set dragTabScrollEdgeSpeed(value:Number):void
 		{
 			_dragTabScrollEdgeSpeed = value;
+		}
+		
+		private var _dragTabAlpha:Number = 0.5;
+		/**
+		 * Indicates the alpha transparency value of the tab dragging. Valid values are 0 (fully transparent) to 1 (fully opaque). If alpha is set to 0, the tab is active, even though it's invisible.
+		 *
+		 * @default 0.5
+		 */
+		public function get dragTabAlpha():Number
+		{
+			return _dragTabAlpha;
+		}
+		public function set dragTabAlpha(value:Number):void
+		{
+			_dragTabAlpha = value;
 		}
 	}
 }
