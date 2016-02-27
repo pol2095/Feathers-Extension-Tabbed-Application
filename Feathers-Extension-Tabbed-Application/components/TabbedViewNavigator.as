@@ -914,10 +914,7 @@ package components
 			isTabMoving = true;
 			tabMoving.alpha = dragTabAlpha;
 			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, EnterFrameDragHandler);
-			if((this as Object).hasOwnProperty("theme"))
-			{
-				if(getQualifiedClassName((this as Object).theme).toLowerCase().indexOf("desktop") != -1) return;
-			}
+			if(scroller.height > tabBar.height) return; //desktop
 			scroller.horizontalScrollPolicy = "off";
 		}
 		
