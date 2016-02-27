@@ -912,9 +912,13 @@ package components
 			onTabMove( mouse );
 			tabMoving.parent.setChildIndex(tabMoving, tabMoving.parent.numChildren - 1)
 			isTabMoving = true;
-			scroller.horizontalScrollPolicy = "off";
 			tabMoving.alpha = dragTabAlpha;
 			Starling.current.stage.addEventListener(EnterFrameEvent.ENTER_FRAME, EnterFrameDragHandler);
+			if((this as Object).hasOwnProperty("theme"))
+			{
+				if(getQualifiedClassName((this as Object).theme).toLowerCase().indexOf("desktop") != -1) return;
+			}
+			scroller.horizontalScrollPolicy = "off";
 		}
 		
 		private function EnterFrameDragHandler():void {
