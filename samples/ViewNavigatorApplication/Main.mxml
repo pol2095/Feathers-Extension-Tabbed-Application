@@ -3,7 +3,7 @@
 	xmlns:f="library://ns.feathersui.com/mxml"
 	creationComplete="creationCompleteHandler()"
 	theme="feathers.themes.MetalWorksDesktopTheme"
-	xmlns:components="components.*"
+	xmlns:components="feathers.extensions.tabbedApplication.*"
 	swipeView="true"
 	persistNavigatorState="true"><!-- swipeNavigator="true" keyCode="left" -->
  

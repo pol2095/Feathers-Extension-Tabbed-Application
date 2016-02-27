@@ -4,21 +4,23 @@ Copyright 2016 pol2095. All Rights Reserved.
 This program is free software. You can redistribute and/or modify it in
 accordance with the terms of the accompanying license agreement.
 */
-package components
+package feathers.extensions.tabbedApplication
 {
-	import feathers.controls.Screen;
+	import feathers.controls.PanelScreen;
+	import feathers.events.FeathersEventType;
+	import starling.events.Event;
 	
 	/**
-	 * A basic view to be displayed by <code>ViewNavigator</code>, based on <code>Screen</code>. Provides
-	 * layout capabilities, but no scrolling.
+	 * A view for use with <code>ViewNavigator</code>, based on <code>PanelScreen</code>
+	 * in order to provide a header and layout.
 	 *
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.html How to use ViewNavigatorApplication with mxml
 	 * @see components.TabbedViewNavigator
 	 * @see components.ViewNavigator
-	 * @see feathers.controls.Screen
+	 * @see feathers.controls.PanelScreen
 	 */
-	public class View extends Screen implements IView
+	public class PanelView extends PanelScreen implements IView
 	{
 		private var _data:Object;
 		/**
@@ -65,9 +67,25 @@ package components
 		/**
 		 * Constructor.
 		 */
-		public function View()
+		public function PanelView()
 		{
 			super();
+			this.addEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
+		}
+		
+		private function creationCompleteHandler():void
+		{
+			this.removeEventListener(FeathersEventType.CREATION_COMPLETE, creationCompleteHandler);
+			if(owner.owner)
+			{
+				if(owner.owner.swipeView || owner.owner.swipeNavigator) this.horizontalScrollPolicy = "off";
+				this.width = owner.owner.stage.stageWidth - owner.owner.left - owner.owner.right;
+				this.height = owner.owner.stage.stageHeight - owner.owner.top - owner.owner.bottom - owner.owner.tabBarHeight;
+			}
+			else if(owner.swipeView)
+			{
+				this.horizontalScrollPolicy = "off";
+			}
 		}
 	}
 }

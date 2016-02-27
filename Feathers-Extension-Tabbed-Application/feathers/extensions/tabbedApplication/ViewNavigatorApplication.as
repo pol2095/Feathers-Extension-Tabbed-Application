@@ -13,7 +13,7 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
-package components
+package feathers.extensions.tabbedApplication
 {
 	import feathers.controls.StackScreenNavigator;
 	import feathers.utils.display.stageToStarling;
@@ -29,19 +29,19 @@ package components
 
 	/**
 	 * Base class for a Feathers application with a
-	 * <code>TabbedViewNavigator</code> as the root display object.
+	 * <code>ViewNavigator</code> as the root display object.
 	 *
-	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
-	 * @see components.TabbedViewNavigator
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.html How to use ViewNavigatorApplication with mxml
+	 * @see components.ViewNavigator
 	 * @see components.View
 	 * @see components.PanelView
 	 */
-	public class TabbedViewNavigatorApplication extends TabbedViewNavigator
+	public class ViewNavigatorApplication extends ViewNavigator
 	{
 		/**
 		 * Constructor.
 		 */
-		public function TabbedViewNavigatorApplication()
+		public function ViewNavigatorApplication()
 		{
 			super();
 			this.addEventListener(Event.ADDED_TO_STAGE, application_addedToStageHandler);
