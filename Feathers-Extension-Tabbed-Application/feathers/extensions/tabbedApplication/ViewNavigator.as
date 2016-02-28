@@ -148,12 +148,14 @@ package feathers.extensions.tabbedApplication
 				hasEventListener_persistNavigatorState = true;
 				//if(CONFIG::air)
 				NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
+				//else Starling.current.nativeStage.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
 			}
 			else if(!value && hasEventListener_persistNavigatorState)
 			{
 				hasEventListener_persistNavigatorState = false;
 				//if(CONFIG::air)
 				NativeApplication.nativeApplication.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
+				//else Starling.current.nativeStage.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
 				clear();
 			}
 		}

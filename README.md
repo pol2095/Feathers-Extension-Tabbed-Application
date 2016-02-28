@@ -14,7 +14,21 @@ TabbedViewNavigatorApplication allows persitence manager, swipe views or swipe n
 
 ## Minimum Requirements
 
-* Adobe AIR 19.0
+* Adobe AIR 19.0 or Adobe Flash Player 19.0
 * [Starling Framework 2.0](http://forum.starling-framework.org/topic/preview-starling-20)
 * [Feathers Framework](https://github.com/BowlerHatLLC/feathers)
 
+Note :
+to compile for Flash player:
+- add in compiler (mxmlc) "-define+=CONFIG::air,false"
+- uncomment in "ViewNavigator.as" :
+    - "CONFIG::air"
+	- "if(CONFIG::air)"
+- if you use "ViewNavigatorApplication" uncomment in "ViewNavigator.as" :
+	- "else Starling.current.nativeStage.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);"
+	- "else Starling.current.nativeStage.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
+- if you use "TabbedViewNavigatorApplication" uncomment in "TabbedViewNavigator.as" :
+	- "CONFIG::air"
+	- "if(CONFIG::air)"
+	- "else Starling.current.nativeStage.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);"
+	- "else Starling.current.nativeStage.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
