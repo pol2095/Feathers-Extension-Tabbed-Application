@@ -17,6 +17,7 @@ package feathers.extensions.tabbedApplication
 	//import feathers.controls.ScreenNavigator;
 	import flash.net.SharedObject;
 	import feathers.layout.AnchorLayout;
+	//CONFIG::air
 	import flash.desktop.NativeApplication;
 	import starling.events.KeyboardEvent;
 	import flash.ui.Keyboard;
@@ -169,11 +170,13 @@ package feathers.extensions.tabbedApplication
 			if(value && !hasEventListener_persistNavigatorState)
 			{
 				hasEventListener_persistNavigatorState = true;
+				//if(CONFIG::air)
 				NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
 			}
 			else if(!value && hasEventListener_persistNavigatorState)
 			{
 				hasEventListener_persistNavigatorState = false;
+				//if(CONFIG::air)
 				NativeApplication.nativeApplication.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
 				clear();
 			}
@@ -424,6 +427,7 @@ package feathers.extensions.tabbedApplication
 		{
 			_persistNavigatorState = false;
 			clear();
+			//if(CONFIG::air)
 			NativeApplication.nativeApplication.exit(errorCode);
 		}
 		

@@ -11,6 +11,7 @@ package feathers.extensions.tabbedApplication
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getDefinitionByName;
 	//import feathers.controls.StackScreenNavigator;
+	//CONFIG::air
 	import flash.desktop.NativeApplication;
 	import flash.events.Event;
 	import flash.net.SharedObject;
@@ -145,11 +146,13 @@ package feathers.extensions.tabbedApplication
 			if(value && !hasEventListener_persistNavigatorState)
 			{
 				hasEventListener_persistNavigatorState = true;
+				//if(CONFIG::air)
 				NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
 			}
 			else if(!value && hasEventListener_persistNavigatorState)
 			{
 				hasEventListener_persistNavigatorState = false;
+				//if(CONFIG::air)
 				NativeApplication.nativeApplication.removeEventListener(flash.events.Event.DEACTIVATE, onDeactivate);
 				clear();
 			}
@@ -320,6 +323,7 @@ package feathers.extensions.tabbedApplication
 			if(owner) return;
 			_persistNavigatorState = false;
 			clear();
+			//if(CONFIG::air)
 			NativeApplication.nativeApplication.exit(errorCode);
 		}
 		
