@@ -18,8 +18,8 @@ TabbedViewNavigatorApplication allows persitence manager, swipe views or swipe n
 * [Starling Framework 2.0](http://forum.starling-framework.org/topic/preview-starling-20)
 * [Feathers Framework](https://github.com/BowlerHatLLC/feathers)
 
-Note :
-to compile for Flash player:
+## Note
+to compile for Flash player :
 - add in compiler (mxmlc) "-define+=CONFIG::air,false"
 - uncomment in "ViewNavigator.as" :
     - "CONFIG::air"
