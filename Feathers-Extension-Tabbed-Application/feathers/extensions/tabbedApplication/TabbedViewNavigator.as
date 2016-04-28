@@ -41,9 +41,9 @@ package feathers.extensions.tabbedApplication
 	 *
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
 	 * @see feathers.controls.TabBar
-	 * @see components.ViewNavigator
-	 * @see components.View
-	 * @see components.PanelView
+	 * @see feathers.extensions.tabbedApplication.ViewNavigator
+	 * @see feathers.extensions.tabbedApplication.View
+	 * @see feathers.extensions.tabbedApplication.PanelView
 	 * @see feathers.controls.LayoutGroup
 	 */
 	public class TabbedViewNavigator extends LayoutGroup

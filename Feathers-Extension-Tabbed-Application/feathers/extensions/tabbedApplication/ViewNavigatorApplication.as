@@ -32,9 +32,9 @@ package feathers.extensions.tabbedApplication
 	 * <code>ViewNavigator</code> as the root display object.
 	 *
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.html How to use ViewNavigatorApplication with mxml
-	 * @see components.ViewNavigator
-	 * @see components.View
-	 * @see components.PanelView
+	 * @see feathers.extensions.tabbedApplication.ViewNavigator
+	 * @see feathers.extensions.tabbedApplication.View
+	 * @see feathers.extensions.tabbedApplication.PanelView
 	 */
 	public class ViewNavigatorApplication extends ViewNavigator
 	{

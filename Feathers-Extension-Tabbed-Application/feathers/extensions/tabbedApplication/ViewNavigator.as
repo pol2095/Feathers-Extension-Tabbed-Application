@@ -40,8 +40,8 @@ package feathers.extensions.tabbedApplication
 	 *
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.html How to use ViewNavigatorApplication with mxml
-	 * @see components.View
-	 * @see components.PanelView
+	 * @see feathers.extensions.tabbedApplication.View
+	 * @see feathers.extensions.tabbedApplication.PanelView
 	 * @see feathers.controls.StackScreenNavigator
 	 */
 	public class ViewNavigator extends StackScreenNavigator

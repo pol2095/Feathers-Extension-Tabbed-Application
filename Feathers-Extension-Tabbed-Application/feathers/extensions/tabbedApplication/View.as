@@ -14,8 +14,8 @@ package feathers.extensions.tabbedApplication
 	 *
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
 	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.html How to use ViewNavigatorApplication with mxml
-	 * @see components.TabbedViewNavigator
-	 * @see components.ViewNavigator
+	 * @see feathers.extensions.tabbedApplication.TabbedViewNavigator
+	 * @see feathers.extensions.tabbedApplication.ViewNavigator
 	 * @see feathers.controls.Screen
 	 */
 	public class View extends Screen implements IView
