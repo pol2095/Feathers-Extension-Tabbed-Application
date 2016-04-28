@@ -14,8 +14,8 @@ package feathers.extensions.tabbedApplication
 	 * A view for use with <code>ViewNavigator</code>, based on <code>PanelScreen</code>
 	 * in order to provide a header and layout.
 	 *
-	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
-	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.html How to use ViewNavigatorApplication with mxml
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.php How to use TabbedViewNavigatorApplication with mxml
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/ViewNavigatorApplication.php How to use ViewNavigatorApplication with mxml
 	 * @see feathers.extensions.tabbedApplication.TabbedViewNavigator
 	 * @see feathers.extensions.tabbedApplication.ViewNavigator
 	 * @see feathers.controls.PanelScreen

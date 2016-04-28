@@ -31,7 +31,7 @@ package feathers.extensions.tabbedApplication
 	 * Base class for a Feathers application with a
 	 * <code>TabbedViewNavigator</code> as the root display object.
 	 *
-	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.php How to use TabbedViewNavigatorApplication with mxml
 	 * @see feathers.extensions.tabbedApplication.TabbedViewNavigator
 	 * @see feathers.extensions.tabbedApplication.View
 	 * @see feathers.extensions.tabbedApplication.PanelView

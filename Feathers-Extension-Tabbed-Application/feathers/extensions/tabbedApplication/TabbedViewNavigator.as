@@ -39,7 +39,7 @@ package feathers.extensions.tabbedApplication
 	/**
 	 * A container takes a <code>tab Bar</code> and <code>ViewNavigator</code>s , based on <code>LayoutGroup</code>.
 	 *
-	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.html How to use TabbedViewNavigatorApplication with mxml
+	 * @see http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/TabbedViewNavigatorApplication.php How to use TabbedViewNavigatorApplication with mxml
 	 * @see feathers.controls.TabBar
 	 * @see feathers.extensions.tabbedApplication.ViewNavigator
 	 * @see feathers.extensions.tabbedApplication.View
