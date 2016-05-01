@@ -596,7 +596,7 @@ package feathers.extensions.tabbedApplication
 		 */
 		public function get length():uint
 		{
-			return tabBar.dataProvider.length;
+			return tabBar.dataProvider ? tabBar.dataProvider.length : 0;
 		}
 		
 		/**
@@ -1057,6 +1057,7 @@ package feathers.extensions.tabbedApplication
 				screenNavigator.removeEventListener(EnterFrameEvent.ENTER_FRAME, onBackReleaseSwipe);
 			}
 			if(!swipeView && !swipeNavigator) return;
+			if(this.length == 0) return;
 			var left:Number = 0, right:Number, top:Number = 0, bottom:Number;
 			left = this.left;
 			right = stage.stageWidth - this.right;
