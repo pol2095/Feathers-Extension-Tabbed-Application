@@ -851,7 +851,7 @@ package feathers.extensions.tabbedApplication
 		{
 			if(!swipeNavigator)
 			{
-				activeNavigator.onTouch( event );
+				if(this.length != 0) activeNavigator.onTouch( event );
 			}
 			else
 			{
