@@ -444,7 +444,13 @@ package feathers.extensions.tabbedApplication
 		 */
 		public function hideTabBar():void
 		{			
-			if(scroller.visible) scroller.includeInLayout = scroller.visible = false;
+			if(scroller.visible)
+			{
+				if(tabBarAlign == "top") layoutDataVN.topAnchorDisplayObject = null;
+				scroller.includeInLayout = scroller.visible = false;
+				if(tabBarAlign == "top") layoutDataVN.top = top;
+				resizeHandler();
+			}
 		}
 		
 		/**
@@ -452,7 +458,13 @@ package feathers.extensions.tabbedApplication
 		 */
 		public function showTabBar():void
 		{			
-			if(!scroller.visible) scroller.includeInLayout = scroller.visible = true;
+			if(!scroller.visible)
+			{
+				if(tabBarAlign == "top") layoutDataVN.topAnchorDisplayObject = scroller;
+				scroller.includeInLayout = scroller.visible = true;
+				if(tabBarAlign == "top") layoutDataVN.top = 0;
+				resizeHandler();
+			}
 		}
 		
 		/**
