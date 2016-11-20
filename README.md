@@ -1,9 +1,9 @@
 # Feathers Extension Tabbed Application 1.4.003
 
 Say hello to [Feathers Extension Tabbed Application](http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/).
-This project adds two components (ViewNavigatorApplicationn and TabbedViewNavigatorApplicatio) to Feathers UI, a library of light-weight, skinnable, and extensible UI controls for mobile and desktop. The components run on Starling Framework and the Adobe Flash runtimes, offering blazing fast GPU powered graphics to create a smooth and responsive experience. Build completely standalone, native applications on iOS, Android, Windows, and Mac OS X, or target Adobe Flash Player in desktop browsers.<br />
-ViewNavigatorApplication adds persitence manager and swipe views (or screens to navigate in the history of views) to feathers.controls.StackScreenNavigator.<br />
-TabbedViewNavigatorApplication allows persitence manager, swipe views or swipe navigators and drag tabs.
+This project adds two components (ViewNavigatorApplication and TabbedViewNavigatorApplication) to Feathers UI, a library of light-weight, skinnable, and extensible UI controls for mobile and desktop. The components run on Starling Framework and the Adobe Flash runtimes, offering blazing fast GPU powered graphics to create a smooth and responsive experience. Build completely standalone, native applications on iOS, Android, Windows, and Mac OS X, or target Adobe Flash Player in desktop browsers.<br />
+The ViewNavigatorApplication class is an application class meant to provide a simple framework for applications that employ a view-based navigation model. It adds persitence manager and swipe views (or screens to navigate in the history of views) to feathers.controls.StackScreenNavigator.<br />
+The TabbedViewNavigatorApplication container defines an application with multiple sections (ViewNavigator). It allows persitence manager, swipe views or swipe navigators and drag tabs.
 
 ## Quick Links
 
