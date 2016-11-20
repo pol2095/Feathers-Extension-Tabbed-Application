@@ -1,8 +1,8 @@
 # Feathers Extension Tabbed Application 1.4.003
 
 Say hello to [Feathers Extension Tabbed Application](http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/).
-This project adds two components (<b>ViewNavigatorApplication</b> and <b>TabbedViewNavigatorApplication</b>) to Feathers UI, a library of light-weight, skinnable, and extensible UI controls for mobile and desktop. The components run on Starling Framework and the Adobe Flash runtimes, offering blazing fast GPU powered graphics to create a smooth and responsive experience. Build completely standalone, native applications on iOS, Android, Windows, and Mac OS X, or target Adobe Flash Player in desktop browsers.<br /><br />
-* The <b>ViewNavigatorApplication</b> class is an application class meant to provide a simple framework for applications that employ a view-based navigation model.<br />It adds persitence manager and swipe views (or screens to navigate in the history of views) to feathers.controls.StackScreenNavigator.<br /><br />
+This project adds two components (<b>ViewNavigatorApplication</b> and <b>TabbedViewNavigatorApplication</b>) to Feathers UI, a library of light-weight, skinnable, and extensible UI controls for mobile and desktop. The components run on Starling Framework and the Adobe Flash runtimes, offering blazing fast GPU powered graphics to create a smooth and responsive experience. Build completely standalone, native applications on iOS, Android, Windows, and Mac OS X, or target Adobe Flash Player in desktop browsers.<br />
+* The <b>ViewNavigatorApplication</b> class is an application class meant to provide a simple framework for applications that employ a view-based navigation model.<br />It adds persitence manager and swipe views (or screens to navigate in the history of views) to feathers.controls.StackScreenNavigator.<br />
 * The <b>TabbedViewNavigatorApplication</b> container defines an application with multiple sections (ViewNavigator).<br />It allows persitence manager, swipe views or swipe navigators and drag tabs.
 
 ## Quick Links
