@@ -10,7 +10,7 @@ It adds persitence manager and swipe views (or screens to navigate in the histor
 ## Quick Links
 
 * [Website](http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/)
-* [API Reference](http://pol2095.free.fr/Feathers-Extension-Tabbed-Application/docs/feathers/extensions/tabbedApplication/package-detail.html)
+* [API Reference](http://pol2095.free.fr/Starling-Feathers-Extensions/docs/feathers/extensions/tabbedApplication/package-detail.html)
 * [Discussion Forum](http://forum.starling-framework.org/forum/feathers)
 * [Github Project](https://github.com/pol2095/Feathers-Extension-Tabbed-Application)
 
