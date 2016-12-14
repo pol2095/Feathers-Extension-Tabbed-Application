@@ -33,6 +33,7 @@ package feathers.extensions.tabbedApplication
 	import feathers.core.FocusManager;
 	import feathers.controls.TextArea;
 	import feathers.controls.TextInput;
+	import flash.system.ApplicationDomain;
 	
 	/**
 	 * A "view stack"-like container that supports navigation between views
@@ -167,6 +168,12 @@ package feathers.extensions.tabbedApplication
 				if(my_so.data.viewsHistory)
 				{
 					_history = Vector.<String>(my_so.data.viewsHistory);
+					if( !checkClasses(_history) )
+					{
+						clear();
+						pushFirstView(screen, data, transition);
+						return;
+					}
 					_historyData = Vector.<Object>(my_so.data.viewsHistoryData);
 					position = my_so.data.viewsPosition;
 				}
@@ -695,6 +702,16 @@ package feathers.extensions.tabbedApplication
 		public function set latencyToStartSwipe(value:uint):void
 		{
 			_latencyToStartSwipe = value;
+		}
+		
+		private function checkClasses(_history:Vector.<String>):Boolean
+		{
+			if(my_so.data.viewsHistory == "") return false;
+			for each(var history:String in _history)
+			{
+				if( !ApplicationDomain.currentDomain.hasDefinition( history.substring(0, history.lastIndexOf("_")) ) ) return false;
+			}
+			return true;
 		}
 	}
 }

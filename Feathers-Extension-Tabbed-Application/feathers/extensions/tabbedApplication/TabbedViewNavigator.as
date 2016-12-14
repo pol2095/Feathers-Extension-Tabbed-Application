@@ -26,7 +26,7 @@ package feathers.extensions.tabbedApplication
 	import feathers.controls.ToggleButton;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.events.Touch
+	import starling.events.Touch;
 	import flash.geom.Point;
 	import feathers.controls.IScreen;
 	import feathers.controls.supportClasses.IScreenNavigatorItem;
@@ -34,6 +34,7 @@ package feathers.extensions.tabbedApplication
 	import starling.display.DisplayObject;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getDefinitionByName;
+	import flash.system.ApplicationDomain;
 	import starling.core.Starling;
 
 	/**
@@ -293,7 +294,6 @@ package feathers.extensions.tabbedApplication
 		 */
 		public function addElement(label:String, screen:Object, data:Object = null, transition:Function = null):void
 		{
-			stage.addEventListener(EnterFrameEvent.ENTER_FRAME, onInit);
 			if(!tabBar.dataProvider)
 			{
 				tabBar.dataProvider = new ListCollection();
@@ -305,9 +305,17 @@ package feathers.extensions.tabbedApplication
 				}
 				else
 				{
+					var navigatorsHistory:Vector.<Object> = Vector.<Object>(my_so.data.viewsHistory);
+					if( !checkClasses(navigatorsHistory) )
+					{
+						clear();
+						tabBar.dataProvider = null;
+						addElement(label, screen, data, transition)
+						return;
+					}
+					stage.addEventListener(EnterFrameEvent.ENTER_FRAME, onInit);
 					init = true;
 					var tabBarHistory:Vector.<Object> = Vector.<Object>(my_so.data.tabBarHistory);
-					var navigatorsHistory:Vector.<Object> = Vector.<Object>(my_so.data.viewsHistory);
 					for(var i:uint = 0; i < tabBarHistory.length; i++)
 					{
 						createElement(tabBarHistory[i].label, tabBarHistory[i].vnID, screen, data, transition, Vector.<String>(navigatorsHistory[i]._history), Vector.<Object>(navigatorsHistory[i]._historyData), navigatorsHistory[i].position);
@@ -1285,6 +1293,20 @@ package feathers.extensions.tabbedApplication
 		public function set dragTabAlpha(value:Number):void
 		{
 			_dragTabAlpha = value;
+		}
+		
+		private function checkClasses(navigatorsHistory:Vector.<Object>):Boolean
+		{
+			if(my_so.data.viewsHistory == "") return false;
+			for each(var navigatorHistory:Object in navigatorsHistory)
+			{
+				if( !navigatorHistory.hasOwnProperty("_history") ) return false;
+				for each(var _history:String in navigatorHistory._history)
+				{
+					if( !ApplicationDomain.currentDomain.hasDefinition( _history.substring(_history.indexOf("_")+1, _history.lastIndexOf("_")) ) ) return false;
+				}
+			}
+			return true;
 		}
 	}
 }
