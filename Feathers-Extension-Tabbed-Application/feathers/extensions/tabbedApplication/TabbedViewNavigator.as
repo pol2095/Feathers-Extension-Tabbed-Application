@@ -1298,11 +1298,19 @@ package feathers.extensions.tabbedApplication
 		private function checkClasses(navigatorsHistory:Vector.<Object>):Boolean
 		{
 			if(my_so.data.viewsHistory == "") return false;
+			var _navigatorsHistory:Vector.<String> = new <String>[];
 			for each(var navigatorHistory:Object in navigatorsHistory)
 			{
 				if( !navigatorHistory.hasOwnProperty("_history") ) return false;
-				for each(var _history:String in navigatorHistory._history)
+				_navigatorsHistory = _navigatorsHistory.concat(navigatorHistory._history);
+			}
+			
+			var navigatorsHistoryUnique:Vector.<String> = new <String>[];
+			for each(var _history:String in _navigatorsHistory)
+			{
+				if(navigatorsHistoryUnique.indexOf(_history) == -1)
 				{
+					navigatorsHistoryUnique.push(_history);
 					if( !ApplicationDomain.currentDomain.hasDefinition( _history.substring(_history.indexOf("_")+1, _history.lastIndexOf("_")) ) ) return false;
 				}
 			}

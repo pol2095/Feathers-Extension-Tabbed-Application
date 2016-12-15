@@ -707,9 +707,14 @@ package feathers.extensions.tabbedApplication
 		private function checkClasses(_history:Vector.<String>):Boolean
 		{
 			if(my_so.data.viewsHistory == "") return false;
+			var historyUnique:Vector.<String> = new <String>[];
 			for each(var history:String in _history)
 			{
-				if( !ApplicationDomain.currentDomain.hasDefinition( history.substring(0, history.lastIndexOf("_")) ) ) return false;
+				if(historyUnique.indexOf(history) == -1)
+				{
+					historyUnique.push(history);
+					if( !ApplicationDomain.currentDomain.hasDefinition( history.substring(0, history.lastIndexOf("_")) ) ) return false;
+				}
 			}
 			return true;
 		}
