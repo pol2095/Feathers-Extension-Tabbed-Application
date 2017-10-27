@@ -502,7 +502,7 @@ package feathers.extensions.tabbedApplication
 				screenNavigator.removeScreen(tabBar.dataProvider.getItemAt(index).vnID);
 				tabBar.dataProvider.removeItemAt(index);
 				isScrollToIndex = false;
-				this.selectedIndex = dpIndexOf(tabBar.dataProvider, selectedItemID);
+				this.selectedIndex = dpIndexOf(tabBar.dataProvider as ListCollection, selectedItemID);
 				isScrollToIndex = true;
 				if(tabBar.dataProvider.length == 1 && tabBarAutoHide) hideTabBar();
 			}
@@ -540,7 +540,7 @@ package feathers.extensions.tabbedApplication
 				tabBar.dataProvider.removeItemAt(indexToMove);
 				tabBar.dataProvider.addItemAt(itemToMove, newIndex);
 				isScrollToIndex = false;
-				this.selectedIndex = dpIndexOf(tabBar.dataProvider, selectedItemID);
+				this.selectedIndex = dpIndexOf(tabBar.dataProvider as ListCollection, selectedItemID);
 				isScrollToIndex = true;
 			}
 		}

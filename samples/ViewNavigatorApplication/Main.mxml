@@ -17,9 +17,8 @@
 				var data:Object = { volume: 0.8, difficulty: "hard" };
 				pushView(ViewA, data);
 				
-				this.pushTransition = Slide.createSlideLeftTransition();
-				this.popTransition = Slide.createSlideRightTransition();
-				this.pushTransition = Slide.createSlideLeftTransition( 0.75, Transitions.EASE_IN_OUT );
+				/*this.popTransition = Slide.createSlideRightTransition();
+				this.pushTransition = Slide.createSlideLeftTransition( 0.75, Transitions.EASE_IN_OUT );*/
 			}
 		]]>
 	</fx:Script>

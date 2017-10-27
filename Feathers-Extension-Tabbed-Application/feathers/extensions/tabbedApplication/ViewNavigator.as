@@ -116,7 +116,6 @@ package feathers.extensions.tabbedApplication
 			if(screen) {
 				_pushView(screen, data, null, transition, _history, _historyData, position);
 				
-				this.pushTransition = Slide.createSlideLeftTransition();
 				this.popTransition = Slide.createSlideRightTransition();
 				this.pushTransition = Slide.createSlideLeftTransition( 0.75, Transitions.EASE_IN_OUT );
 			}
