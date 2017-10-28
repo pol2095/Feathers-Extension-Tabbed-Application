@@ -81,7 +81,7 @@ package feathers.extensions.tabbedApplication
 			
 			scroller = new ScrollContainer();
 			layoutDataTB = new AnchorLayoutData();
-			layoutDataTB.right = layoutDataTB.top = layoutDataTB.left = 0;
+			layoutDataTB.top = layoutDataTB.left = 0;
 			scroller.layoutData = layoutDataTB;
 			tabBar = new TabBar();
 			scroller.addChild( tabBar );
@@ -379,6 +379,7 @@ package feathers.extensions.tabbedApplication
 		
 		private function tabBar_changeHandler( event:starling.events.Event ):void
 		{
+			if(tabBar.dataProvider.length == 0) return;
 			if(screenNavigator.activeScreenID != tabBar.selectedItem.vnID)
 			{
 				screenNavigator.showScreen(tabBar.selectedItem.vnID);
